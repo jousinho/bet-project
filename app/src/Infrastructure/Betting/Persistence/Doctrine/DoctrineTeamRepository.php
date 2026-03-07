@@ -1,0 +1,46 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Infrastructure\Betting\Persistence\Doctrine;
+
+use App\Domain\Betting\Entity\Team;
+use App\Domain\Betting\Repository\TeamRepositoryInterface;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+
+class DoctrineTeamRepository implements TeamRepositoryInterface
+{
+    private EntityRepository $repository;
+
+    public function __construct(private readonly EntityManagerInterface $entityManager)
+    {
+        $this->repository = $entityManager->getRepository(Team::class);
+    }
+
+    public function findById(int $id): ?Team
+    {
+        return $this->repository->find($id);
+    }
+
+    public function findAll(): array
+    {
+        return $this->repository->findAll();
+    }
+
+    public function findAllOrderedByNextFixture(): array
+    {
+        return $this->entityManager->createQueryBuilder()
+            ->select('t')
+            ->from(Team::class, 't')
+            ->orderBy('t.nextFixtureDate', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function save(Team $team): void
+    {
+        $this->entityManager->persist($team);
+        $this->entityManager->flush();
+    }
+}

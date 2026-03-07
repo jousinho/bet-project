@@ -1,0 +1,112 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tomorrow's Bets{% endblock %}
+
+{% block stylesheets %}
+<style>
+    body { font-family: sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { margin-bottom: 1.5rem; }
+    details { border: 1px solid #ddd; border-radius: 6px; margin-bottom: 0.5rem; padding: 0.75rem 1rem; }
+    details.highlighted { border-color: #f59e0b; background: #fffbeb; }
+    summary { cursor: pointer; display: flex; gap: 2rem; align-items: center; font-size: 1rem; }
+    summary::-webkit-details-marker { display: none; }
+    .team-name { font-weight: bold; min-width: 160px; }
+    .fixture-info { color: #555; }
+    .badge { display: inline-block; padding: 0.15rem 0.45rem; border-radius: 4px; font-size: 0.8rem; font-weight: bold; margin-right: 2px; }
+    .badge-W { background: #d1fae5; color: #065f46; }
+    .badge-D { background: #e5e7eb; color: #374151; }
+    .badge-L { background: #fee2e2; color: #991b1b; }
+    .detail-section { margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid #eee; display: grid; gap: 0.4rem; }
+    .stat-row { display: flex; gap: 1rem; align-items: center; font-size: 0.9rem; }
+    .stat-label { color: #6b7280; min-width: 200px; }
+    .no-data { color: #9ca3af; font-style: italic; }
+    .tomorrow-tag { background: #f59e0b; color: #fff; font-size: 0.75rem; padding: 0.1rem 0.4rem; border-radius: 4px; }
+</style>
+{% endblock %}
+
+{% block body %}
+<h1>Tomorrow's Bets</h1>
+
+{% if bets is empty %}
+    <p class="no-data">No tracked teams found.</p>
+{% else %}
+    {% for bet in bets %}
+    <details{% if bet.highlightedTomorrow %} class="highlighted"{% endif %}>
+        <summary>
+            <span class="team-name">{{ bet.teamName }}</span>
+            <span class="fixture-info">
+                {% if bet.nextFixtureDate %}
+                    {{ bet.nextFixtureDate }}
+                    &mdash;
+                    {% if bet.nextFixtureOpponentName %}{{ bet.nextFixtureOpponentName }}{% else %}TBD{% endif %}
+                    &mdash;
+                    {{ bet.isHome ? 'Home' : 'Away' }}
+                {% else %}
+                    No fixture scheduled
+                {% endif %}
+            </span>
+            {% if bet.highlightedTomorrow %}<span class="tomorrow-tag">TOMORROW</span>{% endif %}
+        </summary>
+
+        <div class="detail-section">
+            <div class="stat-row">
+                <span class="stat-label">Form (last 8):</span>
+                <span>
+                    {% if bet.formLast8 %}
+                        {% for char in bet.formLast8|split('') %}
+                            <span class="badge badge-{{ char }}">{{ char }}</span>
+                        {% endfor %}
+                    {% else %}
+                        <span class="no-data">—</span>
+                    {% endif %}
+                </span>
+            </div>
+
+            <div class="stat-row">
+                <span class="stat-label">Form {{ bet.isHome ? 'at home' : 'away' }} (last 5):</span>
+                <span>
+                    {% if bet.formSituational %}
+                        {% for char in bet.formSituational|split('') %}
+                            <span class="badge badge-{{ char }}">{{ char }}</span>
+                        {% endfor %}
+                    {% else %}
+                        <span class="no-data">—</span>
+                    {% endif %}
+                </span>
+            </div>
+
+            {% if bet.highlightedTomorrow and bet.nextFixtureOpponentName %}
+            <div class="stat-row">
+                <span class="stat-label">{{ bet.nextFixtureOpponentName }} form {{ bet.isHome ? 'away' : 'at home' }} (last 5):</span>
+                <span>
+                    {% if bet.opponentFormSituational %}
+                        {% for char in bet.opponentFormSituational|split('') %}
+                            <span class="badge badge-{{ char }}">{{ char }}</span>
+                        {% endfor %}
+                    {% else %}
+                        <span class="no-data">—</span>
+                    {% endif %}
+                </span>
+            </div>
+            {% endif %}
+
+            <div class="stat-row">
+                <span class="stat-label">
+                    {{ bet.teamName }} {{ bet.isHome ? 'home +2.5 goals' : 'away +1.5 goals' }}:
+                </span>
+                <span>{{ bet.teamOverCount }}/{{ bet.teamMatchesPlayed }}</span>
+            </div>
+
+            {% if bet.highlightedTomorrow and bet.nextFixtureOpponentName %}
+            <div class="stat-row">
+                <span class="stat-label">
+                    {{ bet.nextFixtureOpponentName }} {{ bet.isHome ? 'away +1.5 goals' : 'home +2.5 goals' }}:
+                </span>
+                <span>{{ bet.opponentOverCount }}/{{ bet.opponentMatchesPlayed }}</span>
+            </div>
+            {% endif %}
+        </div>
+    </details>
+    {% endfor %}
+{% endif %}
+{% endblock %}

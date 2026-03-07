@@ -1,0 +1,40 @@
+parameters:
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\Domain\:
+        resource: '../src/Domain/'
+        exclude:
+            - '../src/Domain/**/Entity/'
+            - '../src/Domain/**/Exception/'
+
+    App\Application\:
+        resource: '../src/Application/'
+        exclude:
+            - '../src/Application/**/DTO/'
+
+    App\Infrastructure\:
+        resource: '../src/Infrastructure/'
+        exclude:
+            - '../src/Infrastructure/**/Persistence/Doctrine/Migrations/'
+            - '../src/Infrastructure/**/Http/Controller/'
+
+    # Bindings interfaz → implementación Doctrine
+    App\Domain\Betting\Repository\TeamRepositoryInterface:
+        class: App\Infrastructure\Betting\Persistence\Doctrine\DoctrineTeamRepository
+
+    App\Domain\Betting\Repository\TeamExternalIdRepositoryInterface:
+        class: App\Infrastructure\Betting\Persistence\Doctrine\DoctrineTeamExternalIdRepository
+
+
+    App\Domain\Betting\Repository\FootballDataProviderInterface:
+        class: App\Infrastructure\Betting\Http\Client\FootballDataClient
+        arguments:
+            $apiKey: '%env(FOOTBALL_DATA_API_KEY)%'
+
+    App\Infrastructure\Betting\Http\Controller\BetsController:
+        tags: ['controller.service_arguments']
+        public: true

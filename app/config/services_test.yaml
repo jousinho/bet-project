@@ -1,0 +1,17 @@
+services:
+    App\Domain\Betting\Repository\TeamRepositoryInterface:
+        class: App\Infrastructure\Betting\Persistence\Doctrine\DoctrineTeamRepository
+        autowire: true
+        public: true
+
+    App\Domain\Betting\Repository\TeamExternalIdRepositoryInterface:
+        class: App\Infrastructure\Betting\Persistence\Doctrine\DoctrineTeamExternalIdRepository
+        autowire: true
+        public: true
+
+    App\Domain\Betting\Repository\FootballDataProviderInterface:
+        class: App\Infrastructure\Betting\Http\Client\FootballDataClient
+        arguments:
+            $apiKey: 'test_key'
+        autowire: true
+        public: true
