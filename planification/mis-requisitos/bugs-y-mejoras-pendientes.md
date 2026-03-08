@@ -35,3 +35,8 @@ Ver semana a semana cuántas apuestas se acertaron y cuántas fallaron, para ide
 ### [MEJ-005] Contador de apuestas por categoría — 2026-03-08
 En las summary cards del historial, mostrar además el desglose por tipo de apuesta (OV 2.5, Victoria local), con sus propios totales y win rate.
 **Estado:** ✅ Resuelto
+
+### [MEJ-006] Mostrar jornada de liga en resumen semanal — 2026-03-08
+En el resumen semanal del historial, mostrar "Jornada X" en vez del número de semana ISO.
+Requiere capturar el matchday de la API, guardarlo en Team (nextFixtureMatchday) y en Bet (matchday).
+**Estado:** ✅ Resuelto

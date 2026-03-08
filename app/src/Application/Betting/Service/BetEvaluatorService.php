@@ -42,6 +42,7 @@ class BetEvaluatorService
                     $team->nextFixtureOpponentName() ?? '',
                     $criterion->betType(),
                     $this->seasonResolver->resolve($team->nextFixtureDate()),
+                    $team->nextFixtureMatchday(),
                 ));
             }
         }

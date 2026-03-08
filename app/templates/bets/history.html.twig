@@ -186,17 +186,19 @@
     {% set byType = byType|merge({(t): e}) %}
 {% endfor %}
 
-{# Weekly #}
-{% set byWeek = {} %}
+{# By matchday #}
+{% set byMatchday = {} %}
 {% for bet in bets %}
-    {% set wk = bet.fixtureDate|date('Y') ~ '-' ~ bet.fixtureDate|date('W') %}
-    {% set e = byWeek[wk] is defined ? byWeek[wk] : {label: 'Sem. ' ~ bet.fixtureDate|date('W') ~ '  (' ~ bet.fixtureDate|date('Y') ~ ')', won: 0, lost: 0, pending: 0} %}
-    {% if bet.status == 'won'     %}{% set e = e|merge({won:     e.won     + 1}) %}{% endif %}
-    {% if bet.status == 'lost'    %}{% set e = e|merge({lost:    e.lost    + 1}) %}{% endif %}
-    {% if bet.status == 'pending' %}{% set e = e|merge({pending: e.pending + 1}) %}{% endif %}
-    {% set byWeek = byWeek|merge({(wk): e}) %}
+    {% if bet.matchday %}
+        {% set key = bet.season ~ '-J' ~ '%02d'|format(bet.matchday) %}
+        {% set e = byMatchday[key] is defined ? byMatchday[key] : {label: 'J' ~ bet.matchday ~ ' (' ~ bet.season ~ ')', won: 0, lost: 0, pending: 0} %}
+        {% if bet.status == 'won'     %}{% set e = e|merge({won:     e.won     + 1}) %}{% endif %}
+        {% if bet.status == 'lost'    %}{% set e = e|merge({lost:    e.lost    + 1}) %}{% endif %}
+        {% if bet.status == 'pending' %}{% set e = e|merge({pending: e.pending + 1}) %}{% endif %}
+        {% set byMatchday = byMatchday|merge({(key): e}) %}
+    {% endif %}
 {% endfor %}
-{% set sortedWeeks = byWeek|keys|sort|reverse %}
+{% set sortedMatchdays = byMatchday|keys|sort|reverse %}
 
 {# ── Summary ── #}
 <h2>Resumen general</h2>
@@ -242,11 +244,11 @@
 {% endif %}
 
 {# ── Weekly breakdown ── #}
-{% if byWeek is not empty %}
-<h2>Resultados por semana</h2>
+{% if byMatchday is not empty %}
+<h2>Resultados por jornada</h2>
 <div class="weekly-grid">
-    {% for wk in sortedWeeks %}
-    {% set w = byWeek[wk] %}
+    {% for key in sortedMatchdays %}
+    {% set w = byMatchday[key] %}
     {% set ws = w.won + w.lost %}
     {% set wr = ws > 0 ? (w.won / ws * 100)|round(0) : -1 %}
     {% set cls = wr >= 60 ? 'good' : (wr >= 0 and wr < 40 ? 'bad' : (wr >= 0 ? 'mixed' : '')) %}

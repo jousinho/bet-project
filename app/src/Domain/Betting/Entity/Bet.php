@@ -40,6 +40,9 @@ class Bet
     #[ORM\Column(length: 7)]
     private string $season;
 
+    #[ORM\Column(nullable: true)]
+    private ?int $matchday = null;
+
     #[ORM\Column]
     private \DateTimeImmutable $createdAt;
 
@@ -52,12 +55,14 @@ class Bet
         string $opponentName,
         string $betType,
         string $season,
+        ?int $matchday = null,
     ) {
         $this->team        = $team;
         $this->fixtureDate = $fixtureDate;
         $this->opponentName = $opponentName;
         $this->betType     = $betType;
         $this->season      = $season;
+        $this->matchday    = $matchday;
         $this->status      = self::STATUS_PENDING;
         $this->createdAt   = new \DateTimeImmutable();
     }
@@ -68,8 +73,9 @@ class Bet
         string $opponentName,
         string $betType,
         string $season,
+        ?int $matchday = null,
     ): self {
-        return new self($team, $fixtureDate, $opponentName, $betType, $season);
+        return new self($team, $fixtureDate, $opponentName, $betType, $season, $matchday);
     }
 
     public function id(): int { return $this->id; }
@@ -79,6 +85,7 @@ class Bet
     public function betType(): string { return $this->betType; }
     public function status(): string { return $this->status; }
     public function season(): string { return $this->season; }
+    public function matchday(): ?int { return $this->matchday; }
     public function createdAt(): \DateTimeImmutable { return $this->createdAt; }
     public function settledAt(): ?\DateTimeImmutable { return $this->settledAt; }
 

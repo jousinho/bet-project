@@ -90,6 +90,7 @@ class TeamSyncService
             $team->setNextFixtureOpponentId((int) $fixture['opponentExternalId']);
             $team->setNextFixtureOpponentName($fixture['opponentName']);
             $team->setNextFixtureIsHome($fixture['isHome']);
+            $team->setNextFixtureMatchday($fixture['matchday'] ?? null);
             $team->setNextFixtureOpponentFormSituational(
                 $this->fetchOpponentFormSituational(
                     $fixture['opponentExternalId'],
@@ -103,6 +104,7 @@ class TeamSyncService
             $team->setNextFixtureOpponentName(null);
             $team->setNextFixtureOpponentFormSituational(null);
             $team->setNextFixtureIsHome(null);
+            $team->setNextFixtureMatchday(null);
         }
     }
 
