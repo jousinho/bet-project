@@ -164,6 +164,7 @@
 
 {% block body %}
 <h1>Tomorrow's Bets</h1>
+<a href="{{ path('bets_history') }}">Ver historial de apuestas →</a>
 
 {% if bets is empty %}
     <p class="no-data">No tracked teams found.</p>

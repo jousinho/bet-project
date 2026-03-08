@@ -99,6 +99,27 @@
 
     .summary-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #94a3b8; }
     .summary-value { font-size: 1.5rem; font-weight: 700; color: #0f172a; margin-top: 0.2rem; }
+
+    .criteria-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+    .criterion-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-left: 4px solid #6d28d9;
+        border-radius: 10px;
+        padding: 1rem 1.25rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+    .criterion-card.green { border-left-color: #059669; }
+    .criterion-name { font-size: 0.85rem; font-weight: 700; color: #0f172a; margin-bottom: 0.5rem; }
+    .criterion-rule { font-size: 0.8rem; color: #475569; line-height: 1.5; }
+    .criterion-rule li { margin-bottom: 0.2rem; }
+
+    .ranking-table { margin-bottom: 1.5rem; }
 </style>
 {% endblock %}
 
@@ -136,6 +157,25 @@
     </div>
 </div>
 
+<h2>Criterios activos</h2>
+<div class="criteria-grid">
+    <div class="criterion-card green">
+        <div class="criterion-name">OV 2.5 — Más de 2.5 goles</div>
+        <ul class="criterion-rule">
+            <li><strong>Local:</strong> ≥ 75 % de partidos en casa con más de 2.5 goles (mín. 5 partidos)</li>
+            <li><strong>Visitante:</strong> ≥ 62.5 % de partidos fuera con más de 1.5 goles (mín. 5 partidos)</li>
+        </ul>
+    </div>
+    <div class="criterion-card">
+        <div class="criterion-name">1 — Victoria local</div>
+        <ul class="criterion-rule">
+            <li>El equipo juega en casa</li>
+            <li>≥ 4 victorias en los últimos 5 partidos en casa</li>
+            <li>El rival tiene ≥ 3 derrotas en sus últimos 5 partidos fuera</li>
+        </ul>
+    </div>
+</div>
+
 {% if stats is not empty %}
 <h2>Stats by team &amp; type</h2>
 <table>
@@ -161,6 +201,37 @@
             <td>{{ s.timesLost }}</td>
             <td class="win-rate">{{ s.winRate }}%</td>
         </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{% if stats is not empty %}
+{% set teamWins = {} %}
+{% for s in stats %}
+    {% set key = s.team.name %}
+    {% set prev = teamWins[key] is defined ? teamWins[key] : 0 %}
+    {% set teamWins = teamWins|merge({(key): prev + s.timesWon}) %}
+{% endfor %}
+{% set sortedTeams = teamWins|keys|sort((a, b) => teamWins[b] - teamWins[a]) %}
+<h2>Ranking por victorias</h2>
+<table class="ranking-table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Equipo</th>
+            <th>Apuestas ganadas</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for teamName in sortedTeams %}
+        {% if teamWins[teamName] > 0 %}
+        <tr>
+            <td style="color:#94a3b8; font-weight:700">{{ loop.index }}</td>
+            <td>{{ teamName }}</td>
+            <td style="font-weight:700; color:#065f46">{{ teamWins[teamName] }}</td>
+        </tr>
+        {% endif %}
         {% endfor %}
     </tbody>
 </table>
