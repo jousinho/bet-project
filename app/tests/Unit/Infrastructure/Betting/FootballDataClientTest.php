@@ -78,8 +78,8 @@ class FootballDataClientTest extends TestCase
                 'matches' => [
                     [
                         'utcDate' => '2025-03-15T20:00:00Z',
-                        'homeTeam' => ['id' => 86],
-                        'awayTeam' => ['id' => 81],
+                        'homeTeam' => ['id' => 86, 'name' => 'Real Madrid'],
+                        'awayTeam' => ['id' => 81, 'name' => 'FC Barcelona'],
                     ],
                 ],
             ]));
@@ -88,6 +88,7 @@ class FootballDataClientTest extends TestCase
 
         $this->assertSame('2025-03-15T20:00:00Z', $fixture['date']);
         $this->assertSame('81', $fixture['opponentExternalId']);
+        $this->assertSame('FC Barcelona', $fixture['opponentName']);
         $this->assertTrue($fixture['isHome']);
     }
 

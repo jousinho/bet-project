@@ -4,23 +4,159 @@
 
 {% block stylesheets %}
 <style>
-    body { font-family: sans-serif; max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
-    h1 { margin-bottom: 1.5rem; }
-    details { border: 1px solid #ddd; border-radius: 6px; margin-bottom: 0.5rem; padding: 0.75rem 1rem; }
-    details.highlighted { border-color: #f59e0b; background: #fffbeb; }
-    summary { cursor: pointer; display: flex; gap: 2rem; align-items: center; font-size: 1rem; }
-    summary::-webkit-details-marker { display: none; }
-    .team-name { font-weight: bold; min-width: 160px; }
-    .fixture-info { color: #555; }
-    .badge { display: inline-block; padding: 0.15rem 0.45rem; border-radius: 4px; font-size: 0.8rem; font-weight: bold; margin-right: 2px; }
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        max-width: 960px;
+        margin: 2rem auto;
+        padding: 0 1.25rem;
+        background: #f8fafc;
+        color: #1e293b;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        color: #0f172a;
+    }
+
+    /* ── Card ── */
+    .card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-left: 4px solid transparent;
+        border-radius: 10px;
+        margin-bottom: 0.75rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,.06);
+        transition: box-shadow .15s;
+        overflow: hidden;
+    }
+    .card:hover { box-shadow: 0 4px 12px rgba(0,0,0,.1); }
+    .card.highlighted { border-left-color: #f59e0b; }
+
+    /* ── Card header (always visible, clickable) ── */
+    .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.25rem;
+        cursor: pointer;
+        user-select: none;
+        gap: 1rem;
+    }
+    .card-header::-webkit-details-marker { display: none; }
+
+    .header-left { display: flex; flex-direction: column; gap: 0.2rem; min-width: 0; }
+
+    .match-title {
+        font-size: 1.05rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    .vs { color: #94a3b8; font-weight: 400; font-size: 0.9rem; }
+
+    .match-meta {
+        font-size: 0.82rem;
+        color: #64748b;
+    }
+
+    .header-badges {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        flex-shrink: 0;
+    }
+
+    /* ── Badges ── */
+    .pill {
+        display: inline-block;
+        padding: 0.2rem 0.55rem;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: .02em;
+        white-space: nowrap;
+    }
+    .pill-tomorrow  { background: #fef3c7; color: #92400e; border: 1px solid #f59e0b; }
+    .pill-home      { background: #dbeafe; color: #1d4ed8; }
+    .pill-away      { background: #ede9fe; color: #6d28d9; }
+    .pill-no-fix    { background: #f1f5f9; color: #94a3b8; }
+
+    /* ── Form badges ── */
+    .badge {
+        display: inline-block;
+        width: 1.6rem;
+        height: 1.6rem;
+        line-height: 1.6rem;
+        text-align: center;
+        border-radius: 5px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        margin-right: 2px;
+    }
     .badge-W { background: #d1fae5; color: #065f46; }
-    .badge-D { background: #e5e7eb; color: #374151; }
+    .badge-D { background: #f1f5f9; color: #374151; }
     .badge-L { background: #fee2e2; color: #991b1b; }
-    .detail-section { margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid #eee; display: grid; gap: 0.4rem; }
-    .stat-row { display: flex; gap: 1rem; align-items: center; font-size: 0.9rem; }
-    .stat-label { color: #6b7280; min-width: 200px; }
-    .no-data { color: #9ca3af; font-style: italic; }
-    .tomorrow-tag { background: #f59e0b; color: #fff; font-size: 0.75rem; padding: 0.1rem 0.4rem; border-radius: 4px; }
+
+    /* ── Card body ── */
+    .card-body {
+        padding: 0 1.25rem 1.25rem;
+        border-top: 1px solid #f1f5f9;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.25rem 2rem;
+    }
+
+    .stat-column { display: flex; flex-direction: column; gap: 0.9rem; padding-top: 1rem; }
+
+    .column-title {
+        font-size: 0.7rem;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        color: #94a3b8;
+        margin-bottom: 0.1rem;
+    }
+
+    .stat-block { display: flex; flex-direction: column; gap: 0.25rem; }
+    .stat-label { font-size: 0.78rem; color: #64748b; }
+    .stat-value { display: flex; align-items: center; gap: 0.15rem; flex-wrap: wrap; }
+
+    .goals-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        padding: 0.25rem 0.6rem;
+        font-size: 0.85rem;
+    }
+    .goals-num { font-weight: 700; color: #0f172a; }
+    .goals-den { color: #94a3b8; font-size: 0.78rem; }
+
+    .no-data { color: #cbd5e1; font-style: italic; font-size: 0.82rem; }
+
+    /* ── Divider between columns ── */
+    .card-body .stat-column:first-child {
+        border-right: 1px solid #f1f5f9;
+        padding-right: 1rem;
+    }
+    .card-body .stat-column:last-child {
+        padding-left: 0.25rem;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+        .card-body { grid-template-columns: 1fr; }
+        .card-body .stat-column:first-child { border-right: none; border-bottom: 1px solid #f1f5f9; padding-right: 0; padding-bottom: 1rem; }
+        .card-body .stat-column:last-child { padding-left: 0; }
+    }
 </style>
 {% endblock %}
 
@@ -31,80 +167,119 @@
     <p class="no-data">No tracked teams found.</p>
 {% else %}
     {% for bet in bets %}
-    <details{% if bet.highlightedTomorrow %} class="highlighted"{% endif %}>
-        <summary>
-            <span class="team-name">{{ bet.teamName }}</span>
-            <span class="fixture-info">
-                {% if bet.nextFixtureDate %}
-                    {{ bet.nextFixtureDate }}
-                    &mdash;
-                    {% if bet.nextFixtureOpponentName %}{{ bet.nextFixtureOpponentName }}{% else %}TBD{% endif %}
-                    &mdash;
-                    {{ bet.isHome ? 'Home' : 'Away' }}
-                {% else %}
-                    No fixture scheduled
+    <details class="card{% if bet.highlightedTomorrow %} highlighted{% endif %}">
+        <summary class="card-header">
+            <div class="header-left">
+                <div class="match-title">
+                    {% if bet.nextFixtureDate %}
+                        {% if bet.isHome %}
+                            {{ bet.teamName }}
+                            <span class="vs">vs</span>
+                            {{ bet.nextFixtureOpponentName ?? 'TBD' }}
+                        {% else %}
+                            {{ bet.nextFixtureOpponentName ?? 'TBD' }}
+                            <span class="vs">vs</span>
+                            {{ bet.teamName }}
+                        {% endif %}
+                    {% else %}
+                        {{ bet.teamName }}
+                    {% endif %}
+                </div>
+                <div class="match-meta">
+                    {% if bet.nextFixtureDate %}
+                        {{ bet.nextFixtureDate }}
+                    {% else %}
+                        No fixture scheduled
+                    {% endif %}
+                </div>
+            </div>
+            <div class="header-badges">
+                {% if bet.highlightedTomorrow %}
+                    <span class="pill pill-tomorrow">TOMORROW</span>
                 {% endif %}
-            </span>
-            {% if bet.highlightedTomorrow %}<span class="tomorrow-tag">TOMORROW</span>{% endif %}
+                {% if bet.nextFixtureDate %}
+                    <span class="pill {{ bet.isHome ? 'pill-home' : 'pill-away' }}">
+                        {{ bet.isHome ? 'Home' : 'Away' }}
+                    </span>
+                {% else %}
+                    <span class="pill pill-no-fix">—</span>
+                {% endif %}
+            </div>
         </summary>
 
-        <div class="detail-section">
-            <div class="stat-row">
-                <span class="stat-label">Form (last 8):</span>
-                <span>
-                    {% if bet.formLast8 %}
-                        {% for char in bet.formLast8|split('') %}
-                            <span class="badge badge-{{ char }}">{{ char }}</span>
-                        {% endfor %}
-                    {% else %}
-                        <span class="no-data">—</span>
-                    {% endif %}
-                </span>
+        <div class="card-body">
+
+            {# ── Left column: our team ── #}
+            <div class="stat-column">
+                <div class="column-title">{{ bet.teamName }}</div>
+
+                <div class="stat-block">
+                    <div class="stat-label">Form — last 8 (newest → oldest)</div>
+                    <div class="stat-value">
+                        {% if bet.formLast8 %}
+                            {% for char in bet.formLast8|split('') %}
+                                <span class="badge badge-{{ char }}">{{ char }}</span>
+                            {% endfor %}
+                        {% else %}
+                            <span class="no-data">No data</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="stat-block">
+                    <div class="stat-label">Form {{ bet.isHome ? 'at home' : 'away' }} — last 5</div>
+                    <div class="stat-value">
+                        {% if bet.formSituational %}
+                            {% for char in bet.formSituational|split('') %}
+                                <span class="badge badge-{{ char }}">{{ char }}</span>
+                            {% endfor %}
+                        {% else %}
+                            <span class="no-data">No data</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="stat-block">
+                    <div class="stat-label">{{ bet.isHome ? '+2.5 goals at home' : '+1.5 goals away' }}</div>
+                    <div class="stat-value">
+                        <span class="goals-chip">
+                            <span class="goals-num">{{ bet.teamOverCount }}</span>
+                            <span class="goals-den">/ {{ bet.teamMatchesPlayed }}</span>
+                        </span>
+                    </div>
+                </div>
             </div>
 
-            <div class="stat-row">
-                <span class="stat-label">Form {{ bet.isHome ? 'at home' : 'away' }} (last 5):</span>
-                <span>
-                    {% if bet.formSituational %}
-                        {% for char in bet.formSituational|split('') %}
-                            <span class="badge badge-{{ char }}">{{ char }}</span>
-                        {% endfor %}
-                    {% else %}
-                        <span class="no-data">—</span>
-                    {% endif %}
-                </span>
+            {# ── Right column: opponent ── #}
+            <div class="stat-column">
+                <div class="column-title">{{ bet.nextFixtureOpponentName ?? 'Rival' }}</div>
+
+                <div class="stat-block">
+                    <div class="stat-label">Form {{ bet.isHome ? 'away' : 'at home' }} — last 5</div>
+                    <div class="stat-value">
+                        {% if bet.opponentFormSituational %}
+                            {% for char in bet.opponentFormSituational|split('') %}
+                                <span class="badge badge-{{ char }}">{{ char }}</span>
+                            {% endfor %}
+                        {% else %}
+                            <span class="no-data">No data</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if bet.highlightedTomorrow and bet.opponentMatchesPlayed > 0 %}
+                <div class="stat-block">
+                    <div class="stat-label">{{ bet.isHome ? '+1.5 goals away' : '+2.5 goals at home' }}</div>
+                    <div class="stat-value">
+                        <span class="goals-chip">
+                            <span class="goals-num">{{ bet.opponentOverCount }}</span>
+                            <span class="goals-den">/ {{ bet.opponentMatchesPlayed }}</span>
+                        </span>
+                    </div>
+                </div>
+                {% endif %}
             </div>
 
-            {% if bet.highlightedTomorrow and bet.nextFixtureOpponentName %}
-            <div class="stat-row">
-                <span class="stat-label">{{ bet.nextFixtureOpponentName }} form {{ bet.isHome ? 'away' : 'at home' }} (last 5):</span>
-                <span>
-                    {% if bet.opponentFormSituational %}
-                        {% for char in bet.opponentFormSituational|split('') %}
-                            <span class="badge badge-{{ char }}">{{ char }}</span>
-                        {% endfor %}
-                    {% else %}
-                        <span class="no-data">—</span>
-                    {% endif %}
-                </span>
-            </div>
-            {% endif %}
-
-            <div class="stat-row">
-                <span class="stat-label">
-                    {{ bet.teamName }} {{ bet.isHome ? 'home +2.5 goals' : 'away +1.5 goals' }}:
-                </span>
-                <span>{{ bet.teamOverCount }}/{{ bet.teamMatchesPlayed }}</span>
-            </div>
-
-            {% if bet.highlightedTomorrow and bet.nextFixtureOpponentName %}
-            <div class="stat-row">
-                <span class="stat-label">
-                    {{ bet.nextFixtureOpponentName }} {{ bet.isHome ? 'away +1.5 goals' : 'home +2.5 goals' }}:
-                </span>
-                <span>{{ bet.opponentOverCount }}/{{ bet.opponentMatchesPlayed }}</span>
-            </div>
-            {% endif %}
         </div>
     </details>
     {% endfor %}

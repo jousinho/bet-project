@@ -63,8 +63,8 @@ class FootballDataClientIntegrationTest extends IntegrationTestCase
             'matches' => [
                 [
                     'utcDate' => '2025-03-15T20:00:00Z',
-                    'homeTeam' => ['id' => 81],
-                    'awayTeam' => ['id' => 86],
+                    'homeTeam' => ['id' => 81, 'name' => 'FC Barcelona'],
+                    'awayTeam' => ['id' => 86, 'name' => 'Real Madrid'],
                 ],
             ],
         ]);
@@ -76,6 +76,7 @@ class FootballDataClientIntegrationTest extends IntegrationTestCase
 
         $this->assertSame('2025-03-15T20:00:00Z', $fixture['date']);
         $this->assertSame('81', $fixture['opponentExternalId']);
+        $this->assertSame('FC Barcelona', $fixture['opponentName']);
         $this->assertFalse($fixture['isHome']); // 86 es visitante
     }
 }

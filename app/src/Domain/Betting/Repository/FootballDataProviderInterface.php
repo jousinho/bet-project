@@ -9,7 +9,7 @@ interface FootballDataProviderInterface
     /**
      * Returns the next scheduled league fixture for the team.
      *
-     * @return array{date: string, opponentExternalId: string, isHome: bool}|array{}
+     * @return array{date: string, opponentExternalId: string, opponentName: string, isHome: bool}|array{}
      */
     public function getNextFixture(string $externalTeamId, string $competition): array;
 

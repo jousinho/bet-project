@@ -48,6 +48,12 @@ class Team
     #[ORM\Column(nullable: true)]
     private ?int $nextFixtureOpponentId = null;
 
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $nextFixtureOpponentName = null;
+
+    #[ORM\Column(length: 5, nullable: true)]
+    private ?string $nextFixtureOpponentFormSituational = null;
+
     #[ORM\Column(nullable: true)]
     private ?bool $nextFixtureIsHome = null;
 
@@ -57,29 +63,34 @@ class Team
     #[ORM\OneToMany(mappedBy: 'team', targetEntity: TeamExternalId::class, cascade: ['persist', 'remove'])]
     private Collection $externalIds;
 
-    public function __construct(string $name, string $league)
+    private function __construct(string $name, string $league)
     {
         $this->name = $name;
         $this->league = $league;
         $this->externalIds = new ArrayCollection();
     }
 
-    public function getId(): int
+    public static function create(string $name, string $league): self
+    {
+        return new self($name, $league);
+    }
+
+    public function id(): int
     {
         return $this->id;
     }
 
-    public function getName(): string
+    public function name(): string
     {
         return $this->name;
     }
 
-    public function getLeague(): string
+    public function league(): string
     {
         return $this->league;
     }
 
-    public function getFormLast8(): ?string
+    public function formLast8(): ?string
     {
         return $this->formLast8;
     }
@@ -89,7 +100,7 @@ class Team
         $this->formLast8 = $formLast8;
     }
 
-    public function getFormLast5Home(): ?string
+    public function formLast5Home(): ?string
     {
         return $this->formLast5Home;
     }
@@ -99,7 +110,7 @@ class Team
         $this->formLast5Home = $formLast5Home;
     }
 
-    public function getFormLast5Away(): ?string
+    public function formLast5Away(): ?string
     {
         return $this->formLast5Away;
     }
@@ -109,7 +120,7 @@ class Team
         $this->formLast5Away = $formLast5Away;
     }
 
-    public function getOver25Home(): int
+    public function over25Home(): int
     {
         return $this->over25Home;
     }
@@ -119,7 +130,7 @@ class Team
         $this->over25Home = $over25Home;
     }
 
-    public function getMatchesPlayedHome(): int
+    public function matchesPlayedHome(): int
     {
         return $this->matchesPlayedHome;
     }
@@ -129,7 +140,7 @@ class Team
         $this->matchesPlayedHome = $matchesPlayedHome;
     }
 
-    public function getOver15Away(): int
+    public function over15Away(): int
     {
         return $this->over15Away;
     }
@@ -139,7 +150,7 @@ class Team
         $this->over15Away = $over15Away;
     }
 
-    public function getMatchesPlayedAway(): int
+    public function matchesPlayedAway(): int
     {
         return $this->matchesPlayedAway;
     }
@@ -149,7 +160,7 @@ class Team
         $this->matchesPlayedAway = $matchesPlayedAway;
     }
 
-    public function getNextFixtureDate(): ?\DateTimeImmutable
+    public function nextFixtureDate(): ?\DateTimeImmutable
     {
         return $this->nextFixtureDate;
     }
@@ -159,7 +170,7 @@ class Team
         $this->nextFixtureDate = $nextFixtureDate;
     }
 
-    public function getNextFixtureOpponentId(): ?int
+    public function nextFixtureOpponentId(): ?int
     {
         return $this->nextFixtureOpponentId;
     }
@@ -169,7 +180,27 @@ class Team
         $this->nextFixtureOpponentId = $nextFixtureOpponentId;
     }
 
-    public function getNextFixtureIsHome(): ?bool
+    public function nextFixtureOpponentName(): ?string
+    {
+        return $this->nextFixtureOpponentName;
+    }
+
+    public function setNextFixtureOpponentName(?string $nextFixtureOpponentName): void
+    {
+        $this->nextFixtureOpponentName = $nextFixtureOpponentName;
+    }
+
+    public function nextFixtureOpponentFormSituational(): ?string
+    {
+        return $this->nextFixtureOpponentFormSituational;
+    }
+
+    public function setNextFixtureOpponentFormSituational(?string $form): void
+    {
+        $this->nextFixtureOpponentFormSituational = $form;
+    }
+
+    public function nextFixtureIsHome(): ?bool
     {
         return $this->nextFixtureIsHome;
     }
@@ -179,7 +210,7 @@ class Team
         $this->nextFixtureIsHome = $nextFixtureIsHome;
     }
 
-    public function getLastSyncedAt(): ?\DateTimeImmutable
+    public function lastSyncedAt(): ?\DateTimeImmutable
     {
         return $this->lastSyncedAt;
     }
@@ -189,7 +220,7 @@ class Team
         $this->lastSyncedAt = $lastSyncedAt;
     }
 
-    public function getExternalIds(): Collection
+    public function externalIds(): Collection
     {
         return $this->externalIds;
     }

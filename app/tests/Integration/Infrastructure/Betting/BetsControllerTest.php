@@ -20,7 +20,7 @@ class BetsControllerTest extends WebIntegrationTestCase
 
     private function createTeam(string $name, \DateTimeImmutable $fixtureDate, bool $isHome = true): Team
     {
-        $team = new Team($name, 'PD');
+        $team = Team::create($name, 'PD');
         $team->setNextFixtureDate($fixtureDate);
         $team->setNextFixtureIsHome($isHome);
         $this->teamRepository->save($team);

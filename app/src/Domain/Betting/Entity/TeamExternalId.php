@@ -23,29 +23,34 @@ class TeamExternalId
     #[ORM\Column(length: 50)]
     private string $externalId;
 
-    public function __construct(Team $team, string $provider, string $externalId)
+    private function __construct(Team $team, string $provider, string $externalId)
     {
         $this->team = $team;
         $this->provider = $provider;
         $this->externalId = $externalId;
     }
 
-    public function getId(): int
+    public static function create(Team $team, string $provider, string $externalId): self
+    {
+        return new self($team, $provider, $externalId);
+    }
+
+    public function id(): int
     {
         return $this->id;
     }
 
-    public function getTeam(): Team
+    public function team(): Team
     {
         return $this->team;
     }
 
-    public function getProvider(): string
+    public function provider(): string
     {
         return $this->provider;
     }
 
-    public function getExternalId(): string
+    public function externalId(): string
     {
         return $this->externalId;
     }

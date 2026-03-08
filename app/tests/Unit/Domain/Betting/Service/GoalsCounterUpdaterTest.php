@@ -16,7 +16,7 @@ class GoalsCounterUpdaterTest extends TestCase
     protected function setUp(): void
     {
         $this->updater = new GoalsCounterUpdater();
-        $this->team = new Team('Test Team', 'PD');
+        $this->team = Team::create('Test Team', 'PD');
     }
 
     private function homeMatch(int $goalsScored): array
@@ -33,31 +33,31 @@ class GoalsCounterUpdaterTest extends TestCase
     {
         $this->updater->update([$this->homeMatch(3)], $this->team);
 
-        $this->assertSame(1, $this->team->getOver25Home());
-        $this->assertSame(1, $this->team->getMatchesPlayedHome());
+        $this->assertSame(1, $this->team->over25Home());
+        $this->assertSame(1, $this->team->matchesPlayedHome());
     }
 
     public function test_updating_home_counters__when_team_scores_2_goals__should_not_increment_over25(): void
     {
         $this->updater->update([$this->homeMatch(2)], $this->team);
 
-        $this->assertSame(0, $this->team->getOver25Home());
-        $this->assertSame(1, $this->team->getMatchesPlayedHome());
+        $this->assertSame(0, $this->team->over25Home());
+        $this->assertSame(1, $this->team->matchesPlayedHome());
     }
 
     public function test_updating_away_counters__when_team_scores_2_goals__should_increment_over15(): void
     {
         $this->updater->update([$this->awayMatch(2)], $this->team);
 
-        $this->assertSame(1, $this->team->getOver15Away());
-        $this->assertSame(1, $this->team->getMatchesPlayedAway());
+        $this->assertSame(1, $this->team->over15Away());
+        $this->assertSame(1, $this->team->matchesPlayedAway());
     }
 
     public function test_updating_away_counters__when_team_scores_1_goal__should_not_increment_over15(): void
     {
         $this->updater->update([$this->awayMatch(1)], $this->team);
 
-        $this->assertSame(0, $this->team->getOver15Away());
-        $this->assertSame(1, $this->team->getMatchesPlayedAway());
+        $this->assertSame(0, $this->team->over15Away());
+        $this->assertSame(1, $this->team->matchesPlayedAway());
     }
 }

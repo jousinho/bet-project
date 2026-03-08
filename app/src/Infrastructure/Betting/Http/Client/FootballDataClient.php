@@ -33,6 +33,7 @@ class FootballDataClient implements FootballDataProviderInterface
         return [
             'date' => $match['utcDate'],
             'opponentExternalId' => (string) $opponent['id'],
+            'opponentName' => $opponent['name'],
             'isHome' => $isHome,
         ];
     }

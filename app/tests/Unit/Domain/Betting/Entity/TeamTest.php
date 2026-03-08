@@ -11,21 +11,21 @@ class TeamTest extends TestCase
 {
     public function test_team_entity__when_created__should_have_correct_default_values(): void
     {
-        $team = new Team('Real Madrid', 'PD');
+        $team = Team::create('Real Madrid', 'PD');
 
-        $this->assertSame('Real Madrid', $team->getName());
-        $this->assertSame('PD', $team->getLeague());
-        $this->assertNull($team->getFormLast8());
-        $this->assertNull($team->getFormLast5Home());
-        $this->assertNull($team->getFormLast5Away());
-        $this->assertSame(0, $team->getOver25Home());
-        $this->assertSame(0, $team->getMatchesPlayedHome());
-        $this->assertSame(0, $team->getOver15Away());
-        $this->assertSame(0, $team->getMatchesPlayedAway());
-        $this->assertNull($team->getNextFixtureDate());
-        $this->assertNull($team->getNextFixtureOpponentId());
-        $this->assertNull($team->getNextFixtureIsHome());
-        $this->assertNull($team->getLastSyncedAt());
-        $this->assertCount(0, $team->getExternalIds());
+        $this->assertSame('Real Madrid', $team->name());
+        $this->assertSame('PD', $team->league());
+        $this->assertNull($team->formLast8());
+        $this->assertNull($team->formLast5Home());
+        $this->assertNull($team->formLast5Away());
+        $this->assertSame(0, $team->over25Home());
+        $this->assertSame(0, $team->matchesPlayedHome());
+        $this->assertSame(0, $team->over15Away());
+        $this->assertSame(0, $team->matchesPlayedAway());
+        $this->assertNull($team->nextFixtureDate());
+        $this->assertNull($team->nextFixtureOpponentId());
+        $this->assertNull($team->nextFixtureIsHome());
+        $this->assertNull($team->lastSyncedAt());
+        $this->assertCount(0, $team->externalIds());
     }
 }

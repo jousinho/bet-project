@@ -34,51 +34,47 @@ class TomorrowBetsService
 
     private function buildDto(Team $team, \DateTimeImmutable $tomorrow): TeamBetDTO
     {
-        $nextFixtureDate = $team->getNextFixtureDate();
+        $nextFixtureDate = $team->nextFixtureDate();
         $isHighlighted = $nextFixtureDate !== null
             && $nextFixtureDate->format('Y-m-d') === $tomorrow->format('Y-m-d');
 
-        $isHome = $team->getNextFixtureIsHome() ?? true;
+        $isHome = $team->nextFixtureIsHome() ?? true;
 
-        $opponentName = null;
-        $opponentFormSituational = null;
+        $opponentName = $team->nextFixtureOpponentName();
+        $opponentFormSituational = $team->nextFixtureOpponentFormSituational();
         $opponentOverCount = 0;
         $opponentMatchesPlayed = 0;
 
-        if ($isHighlighted && $team->getNextFixtureOpponentId() !== null) {
+        if ($isHighlighted && $team->nextFixtureOpponentId() !== null) {
             $opponentExtId = $this->teamExternalIdRepository->findByProviderAndExternalId(
                 'football-data.org',
-                (string) $team->getNextFixtureOpponentId()
+                (string) $team->nextFixtureOpponentId()
             );
 
             if ($opponentExtId !== null) {
-                $opponent = $opponentExtId->getTeam();
+                $opponent = $opponentExtId->team();
                 $this->teamSyncService->sync($opponent);
 
-                $opponentName = $opponent->getName();
-                $opponentFormSituational = $isHome
-                    ? $opponent->getFormLast5Away()
-                    : $opponent->getFormLast5Home();
                 $opponentOverCount = $isHome
-                    ? $opponent->getOver15Away()
-                    : $opponent->getOver25Home();
+                    ? $opponent->over15Away()
+                    : $opponent->over25Home();
                 $opponentMatchesPlayed = $isHome
-                    ? $opponent->getMatchesPlayedAway()
-                    : $opponent->getMatchesPlayedHome();
+                    ? $opponent->matchesPlayedAway()
+                    : $opponent->matchesPlayedHome();
             }
         }
 
         return new TeamBetDTO(
-            teamName: $team->getName(),
+            teamName: $team->name(),
             nextFixtureDate: $nextFixtureDate?->format('Y-m-d H:i') ?? '',
             nextFixtureOpponentName: $opponentName,
             isHome: $isHome,
             highlightedTomorrow: $isHighlighted,
-            formLast8: $team->getFormLast8(),
-            formSituational: $isHome ? $team->getFormLast5Home() : $team->getFormLast5Away(),
+            formLast8: $team->formLast8(),
+            formSituational: $isHome ? $team->formLast5Home() : $team->formLast5Away(),
             opponentFormSituational: $opponentFormSituational,
-            teamOverCount: $isHome ? $team->getOver25Home() : $team->getOver15Away(),
-            teamMatchesPlayed: $isHome ? $team->getMatchesPlayedHome() : $team->getMatchesPlayedAway(),
+            teamOverCount: $isHome ? $team->over25Home() : $team->over15Away(),
+            teamMatchesPlayed: $isHome ? $team->matchesPlayedHome() : $team->matchesPlayedAway(),
             opponentOverCount: $opponentOverCount,
             opponentMatchesPlayed: $opponentMatchesPlayed,
         );

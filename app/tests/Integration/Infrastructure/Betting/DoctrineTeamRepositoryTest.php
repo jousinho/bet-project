@@ -24,21 +24,21 @@ class DoctrineTeamRepositoryTest extends IntegrationTestCase
 
     public function test_persisting_team__should_be_retrievable_from_database(): void
     {
-        $team = new Team('Real Madrid', 'PD');
+        $team = Team::create('Real Madrid', 'PD');
         $this->teamRepository->save($team);
         $this->entityManager->clear();
 
-        $found = $this->teamRepository->findById($team->getId());
+        $found = $this->teamRepository->findById($team->id());
 
         $this->assertNotNull($found);
-        $this->assertSame('Real Madrid', $found->getName());
-        $this->assertSame('PD', $found->getLeague());
+        $this->assertSame('Real Madrid', $found->name());
+        $this->assertSame('PD', $found->league());
     }
 
     public function test_persisting_team_external_id__should_be_linked_to_team(): void
     {
-        $team = new Team('FC Barcelona', 'PD');
-        $externalId = new TeamExternalId($team, 'football-data.org', '81');
+        $team = Team::create('FC Barcelona', 'PD');
+        $externalId = TeamExternalId::create($team, 'football-data.org', '81');
         $team->addExternalId($externalId);
 
         $this->teamRepository->save($team);
@@ -48,14 +48,14 @@ class DoctrineTeamRepositoryTest extends IntegrationTestCase
         $found = $this->teamExternalIdRepository->findByProviderAndExternalId('football-data.org', '81');
 
         $this->assertNotNull($found);
-        $this->assertSame('football-data.org', $found->getProvider());
-        $this->assertSame('FC Barcelona', $found->getTeam()->getName());
+        $this->assertSame('football-data.org', $found->provider());
+        $this->assertSame('FC Barcelona', $found->team()->name());
     }
 
     public function test_finding_team_by_external_id_and_provider__should_return_correct_team(): void
     {
-        $team = new Team('Bayern Munich', 'BL1');
-        $externalId = new TeamExternalId($team, 'football-data.org', '5');
+        $team = Team::create('Bayern Munich', 'BL1');
+        $externalId = TeamExternalId::create($team, 'football-data.org', '5');
         $team->addExternalId($externalId);
 
         $this->teamRepository->save($team);
@@ -65,6 +65,6 @@ class DoctrineTeamRepositoryTest extends IntegrationTestCase
         $found = $this->teamExternalIdRepository->findByProviderAndExternalId('football-data.org', '5');
 
         $this->assertNotNull($found);
-        $this->assertSame('Bayern Munich', $found->getTeam()->getName());
+        $this->assertSame('Bayern Munich', $found->team()->name());
     }
 }

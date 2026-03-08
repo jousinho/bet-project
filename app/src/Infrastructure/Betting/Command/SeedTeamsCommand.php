@@ -45,8 +45,8 @@ class SeedTeamsCommand extends Command
                 continue;
             }
 
-            $team = new Team($data['name'], $data['league']);
-            $externalId = new TeamExternalId($team, 'football-data.org', $data['external_id']);
+            $team = Team::create($data['name'], $data['league']);
+            $externalId = TeamExternalId::create($team, 'football-data.org', $data['external_id']);
             $team->addExternalId($externalId);
 
             $this->entityManager->persist($team);
