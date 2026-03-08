@@ -27,3 +27,11 @@ Mostrar en la página de history un resumen de los criterios de apuesta que se e
 ### [MEJ-003] Ranking de equipos con más apuestas ganadas — 2026-03-08
 Mostrar en la página de history un listado ordenado de equipos por número de apuestas ganadas.
 **Estado:** ✅ Resuelto
+
+### [MEJ-004] Resumen semanal de resultados en History — 2026-03-08
+Ver semana a semana cuántas apuestas se acertaron y cuántas fallaron, para identificar rachas buenas y malas.
+**Estado:** ✅ Resuelto
+
+### [MEJ-005] Contador de apuestas por categoría — 2026-03-08
+En las summary cards del historial, mostrar además el desglose por tipo de apuesta (OV 2.5, Victoria local), con sus propios totales y win rate.
+**Estado:** ✅ Resuelto

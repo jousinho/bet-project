@@ -75,20 +75,16 @@
         color: #6d28d9;
     }
 
-    .win-rate {
-        font-weight: 700;
-        color: #065f46;
-    }
+    .win-rate { font-weight: 700; color: #065f46; }
+    .no-data  { color: #94a3b8; font-style: italic; font-size: 0.85rem; }
 
-    .no-data { color: #94a3b8; font-style: italic; font-size: 0.85rem; }
-
+    /* ── Summary cards ── */
     .summary-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
         gap: 0.75rem;
-        margin-bottom: 1.5rem;
+        margin-bottom: 0.75rem;
     }
-
     .summary-card {
         background: #fff;
         border: 1px solid #e2e8f0;
@@ -96,10 +92,57 @@
         padding: 1rem 1.25rem;
         box-shadow: 0 1px 3px rgba(0,0,0,.06);
     }
-
     .summary-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #94a3b8; }
     .summary-value { font-size: 1.5rem; font-weight: 700; color: #0f172a; margin-top: 0.2rem; }
 
+    /* ── Per-category cards ── */
+    .category-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+    .category-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-left: 4px solid #6d28d9;
+        border-radius: 10px;
+        padding: 0.9rem 1.1rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+    .category-card.green { border-left-color: #059669; }
+    .category-name  { font-size: 0.78rem; font-weight: 700; color: #0f172a; margin-bottom: 0.5rem; }
+    .category-stats { display: flex; gap: 1rem; font-size: 0.82rem; }
+    .category-stats span { color: #64748b; }
+    .category-stats strong { color: #0f172a; }
+    .category-wr { font-size: 0.82rem; margin-top: 0.3rem; font-weight: 700; color: #065f46; }
+
+    /* ── Weekly grid ── */
+    .weekly-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 0.6rem;
+        margin-bottom: 1.5rem;
+    }
+    .week-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-top: 4px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+    .week-card.good { border-top-color: #059669; }
+    .week-card.bad  { border-top-color: #dc2626; }
+    .week-card.mixed { border-top-color: #f59e0b; }
+    .week-label { font-size: 0.72rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 0.4rem; }
+    .week-results { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+    .week-won  { font-size: 0.85rem; font-weight: 700; color: #065f46; }
+    .week-lost { font-size: 0.85rem; font-weight: 700; color: #991b1b; }
+    .week-pending { font-size: 0.82rem; color: #94a3b8; }
+    .week-rate { font-size: 0.72rem; color: #64748b; margin-top: 0.25rem; }
+
+    /* ── Criteria ── */
     .criteria-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -116,39 +159,62 @@
     }
     .criterion-card.green { border-left-color: #059669; }
     .criterion-name { font-size: 0.85rem; font-weight: 700; color: #0f172a; margin-bottom: 0.5rem; }
-    .criterion-rule { font-size: 0.8rem; color: #475569; line-height: 1.5; }
+    .criterion-rule { font-size: 0.8rem; color: #475569; line-height: 1.5; padding-left: 1.1rem; }
     .criterion-rule li { margin-bottom: 0.2rem; }
-
-    .ranking-table { margin-bottom: 1.5rem; }
 </style>
 {% endblock %}
 
 {% block body %}
 <h1>Bet History</h1>
-<a href="{{ path('tomorrow_bets') }}">← Back to Tomorrow's Bets</a>
+<a href="{{ path('tomorrow_bets') }}">← Volver a Tomorrow's Bets</a>
 
+{# ── Computed data ── #}
 {% set total   = bets|length %}
 {% set won     = bets|filter(b => b.status == 'won')|length %}
 {% set lost    = bets|filter(b => b.status == 'lost')|length %}
 {% set pending = bets|filter(b => b.status == 'pending')|length %}
 {% set settled = won + lost %}
 
-<h2>Summary</h2>
+{# Per-category #}
+{% set byType = {} %}
+{% for bet in bets %}
+    {% set t = bet.betType %}
+    {% set e = byType[t] is defined ? byType[t] : {total: 0, won: 0, lost: 0} %}
+    {% set e = e|merge({total: e.total + 1}) %}
+    {% if bet.status == 'won'  %}{% set e = e|merge({won:  e.won  + 1}) %}{% endif %}
+    {% if bet.status == 'lost' %}{% set e = e|merge({lost: e.lost + 1}) %}{% endif %}
+    {% set byType = byType|merge({(t): e}) %}
+{% endfor %}
+
+{# Weekly #}
+{% set byWeek = {} %}
+{% for bet in bets %}
+    {% set wk = bet.fixtureDate|date('Y') ~ '-' ~ bet.fixtureDate|date('W') %}
+    {% set e = byWeek[wk] is defined ? byWeek[wk] : {label: 'Sem. ' ~ bet.fixtureDate|date('W') ~ '  (' ~ bet.fixtureDate|date('Y') ~ ')', won: 0, lost: 0, pending: 0} %}
+    {% if bet.status == 'won'     %}{% set e = e|merge({won:     e.won     + 1}) %}{% endif %}
+    {% if bet.status == 'lost'    %}{% set e = e|merge({lost:    e.lost    + 1}) %}{% endif %}
+    {% if bet.status == 'pending' %}{% set e = e|merge({pending: e.pending + 1}) %}{% endif %}
+    {% set byWeek = byWeek|merge({(wk): e}) %}
+{% endfor %}
+{% set sortedWeeks = byWeek|keys|sort|reverse %}
+
+{# ── Summary ── #}
+<h2>Resumen general</h2>
 <div class="summary-grid">
     <div class="summary-card">
-        <div class="summary-label">Total bets</div>
+        <div class="summary-label">Total</div>
         <div class="summary-value">{{ total }}</div>
     </div>
     <div class="summary-card">
-        <div class="summary-label">Won</div>
+        <div class="summary-label">Ganadas</div>
         <div class="summary-value" style="color:#065f46">{{ won }}</div>
     </div>
     <div class="summary-card">
-        <div class="summary-label">Lost</div>
+        <div class="summary-label">Perdidas</div>
         <div class="summary-value" style="color:#991b1b">{{ lost }}</div>
     </div>
     <div class="summary-card">
-        <div class="summary-label">Pending</div>
+        <div class="summary-label">Pendientes</div>
         <div class="summary-value" style="color:#64748b">{{ pending }}</div>
     </div>
     <div class="summary-card">
@@ -157,13 +223,54 @@
     </div>
 </div>
 
+{# Per-category breakdown #}
+{% if byType is not empty %}
+<div class="category-grid">
+    {% for typeName, e in byType %}
+    {% set s = e.won + e.lost %}
+    <div class="category-card {{ typeName == 'over_2_5' ? 'green' : '' }}">
+        <div class="category-name">{{ typeName|replace({'_': ' '})|upper }}</div>
+        <div class="category-stats">
+            <span><strong>{{ e.total }}</strong> apostadas</span>
+            <span><strong style="color:#065f46">{{ e.won }}</strong> ganadas</span>
+            <span><strong style="color:#991b1b">{{ e.lost }}</strong> perdidas</span>
+        </div>
+        <div class="category-wr">{{ s > 0 ? ((e.won / s * 100)|round(1)) ~ ' % acierto' : '— sin datos' }}</div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{# ── Weekly breakdown ── #}
+{% if byWeek is not empty %}
+<h2>Resultados por semana</h2>
+<div class="weekly-grid">
+    {% for wk in sortedWeeks %}
+    {% set w = byWeek[wk] %}
+    {% set ws = w.won + w.lost %}
+    {% set wr = ws > 0 ? (w.won / ws * 100)|round(0) : -1 %}
+    {% set cls = wr >= 60 ? 'good' : (wr >= 0 and wr < 40 ? 'bad' : (wr >= 0 ? 'mixed' : '')) %}
+    <div class="week-card {{ cls }}">
+        <div class="week-label">{{ w.label }}</div>
+        <div class="week-results">
+            <span class="week-won">✓ {{ w.won }}</span>
+            <span class="week-lost">✗ {{ w.lost }}</span>
+            {% if w.pending > 0 %}<span class="week-pending">⏳ {{ w.pending }}</span>{% endif %}
+        </div>
+        <div class="week-rate">{{ wr >= 0 ? wr ~ ' % acierto' : 'solo pendientes' }}</div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{# ── Criteria ── #}
 <h2>Criterios activos</h2>
 <div class="criteria-grid">
     <div class="criterion-card green">
         <div class="criterion-name">OV 2.5 — Más de 2.5 goles</div>
         <ul class="criterion-rule">
-            <li><strong>Local:</strong> ≥ 75 % de partidos en casa con más de 2.5 goles (mín. 5 partidos)</li>
-            <li><strong>Visitante:</strong> ≥ 62.5 % de partidos fuera con más de 1.5 goles (mín. 5 partidos)</li>
+            <li><strong>Local:</strong> ≥ 75 % de partidos en casa con +2.5 goles (mín. 5 partidos)</li>
+            <li><strong>Visitante:</strong> ≥ 62.5 % de partidos fuera con +1.5 goles (mín. 5 partidos)</li>
         </ul>
     </div>
     <div class="criterion-card">
@@ -176,17 +283,18 @@
     </div>
 </div>
 
+{# ── Stats by team & type ── #}
 {% if stats is not empty %}
-<h2>Stats by team &amp; type</h2>
+<h2>Stats por equipo y tipo</h2>
 <table>
     <thead>
         <tr>
-            <th>Team</th>
-            <th>Type</th>
-            <th>Season</th>
-            <th>Bet</th>
-            <th>Won</th>
-            <th>Lost</th>
+            <th>Equipo</th>
+            <th>Tipo</th>
+            <th>Temporada</th>
+            <th>Apostadas</th>
+            <th>Ganadas</th>
+            <th>Perdidas</th>
             <th>Win %</th>
         </tr>
     </thead>
@@ -204,9 +312,8 @@
         {% endfor %}
     </tbody>
 </table>
-{% endif %}
 
-{% if stats is not empty %}
+{# Ranking #}
 {% set teamWins = {} %}
 {% for s in stats %}
     {% set key = s.team.name %}
@@ -215,13 +322,9 @@
 {% endfor %}
 {% set sortedTeams = teamWins|keys|sort((a, b) => teamWins[b] - teamWins[a]) %}
 <h2>Ranking por victorias</h2>
-<table class="ranking-table">
+<table>
     <thead>
-        <tr>
-            <th>#</th>
-            <th>Equipo</th>
-            <th>Apuestas ganadas</th>
-        </tr>
+        <tr><th>#</th><th>Equipo</th><th>Apuestas ganadas</th></tr>
     </thead>
     <tbody>
         {% for teamName in sortedTeams %}
@@ -237,19 +340,20 @@
 </table>
 {% endif %}
 
-<h2>All bets</h2>
+{# ── All bets ── #}
+<h2>Todas las apuestas</h2>
 {% if bets is empty %}
-    <p class="no-data">No bets recorded yet.</p>
+    <p class="no-data">No hay apuestas registradas aún.</p>
 {% else %}
 <table>
     <thead>
         <tr>
-            <th>Date</th>
-            <th>Team</th>
-            <th>Opponent</th>
-            <th>Type</th>
-            <th>Season</th>
-            <th>Status</th>
+            <th>Fecha</th>
+            <th>Equipo</th>
+            <th>Rival</th>
+            <th>Tipo</th>
+            <th>Temporada</th>
+            <th>Estado</th>
         </tr>
     </thead>
     <tbody>
