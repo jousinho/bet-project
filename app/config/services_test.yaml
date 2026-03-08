@@ -15,3 +15,13 @@ services:
             $apiKey: 'test_key'
         autowire: true
         public: true
+
+    App\Domain\Betting\Repository\BetRepositoryInterface:
+        class: App\Infrastructure\Betting\Persistence\Doctrine\DoctrineBetRepository
+        autowire: true
+        public: true
+
+    App\Domain\Betting\Repository\TeamBetStatsRepositoryInterface:
+        class: App\Infrastructure\Betting\Persistence\Doctrine\DoctrineTeamBetStatsRepository
+        autowire: true
+        public: true
