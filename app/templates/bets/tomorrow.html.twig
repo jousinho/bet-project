@@ -86,6 +86,8 @@
     .pill-home      { background: #dbeafe; color: #1d4ed8; }
     .pill-away      { background: #ede9fe; color: #6d28d9; }
     .pill-no-fix    { background: #f1f5f9; color: #94a3b8; }
+    .pill-over25    { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+    .pill-home-win  { background: #fef9c3; color: #854d0e; border: 1px solid #fbbf24; }
 
     /* ── Form badges ── */
     .badge {
@@ -203,6 +205,12 @@
                     </span>
                 {% else %}
                     <span class="pill pill-no-fix">—</span>
+                {% endif %}
+                {% if 'over_2_5' in bet.activeBetTypes %}
+                    <span class="pill pill-over25">OV 2.5</span>
+                {% endif %}
+                {% if 'home_win' in bet.activeBetTypes %}
+                    <span class="pill pill-home-win">1</span>
                 {% endif %}
             </div>
         </summary>
