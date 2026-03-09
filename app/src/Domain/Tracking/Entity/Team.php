@@ -34,10 +34,34 @@ class Team
     private int $over25Home = 0;
 
     #[ORM\Column(options: ['default' => 0])]
+    private int $over15Home = 0;
+
+    #[ORM\Column(options: ['default' => 0])]
+    private int $over35Home = 0;
+
+    #[ORM\Column(options: ['default' => 0])]
+    private int $over05HtHome = 0;
+
+    #[ORM\Column(options: ['default' => 0])]
+    private int $winBothHalvesHome = 0;
+
+    #[ORM\Column(options: ['default' => 0])]
     private int $matchesPlayedHome = 0;
 
     #[ORM\Column(options: ['default' => 0])]
     private int $over15Away = 0;
+
+    #[ORM\Column(options: ['default' => 0])]
+    private int $over25Away = 0;
+
+    #[ORM\Column(options: ['default' => 0])]
+    private int $over35Away = 0;
+
+    #[ORM\Column(options: ['default' => 0])]
+    private int $over05HtAway = 0;
+
+    #[ORM\Column(options: ['default' => 0])]
+    private int $winBothHalvesAway = 0;
 
     #[ORM\Column(options: ['default' => 0])]
     private int $matchesPlayedAway = 0;
@@ -133,6 +157,46 @@ class Team
         $this->over25Home = $over25Home;
     }
 
+    public function over15Home(): int
+    {
+        return $this->over15Home;
+    }
+
+    public function setOver15Home(int $over15Home): void
+    {
+        $this->over15Home = $over15Home;
+    }
+
+    public function over35Home(): int
+    {
+        return $this->over35Home;
+    }
+
+    public function setOver35Home(int $over35Home): void
+    {
+        $this->over35Home = $over35Home;
+    }
+
+    public function over05HtHome(): int
+    {
+        return $this->over05HtHome;
+    }
+
+    public function setOver05HtHome(int $over05HtHome): void
+    {
+        $this->over05HtHome = $over05HtHome;
+    }
+
+    public function winBothHalvesHome(): int
+    {
+        return $this->winBothHalvesHome;
+    }
+
+    public function setWinBothHalvesHome(int $winBothHalvesHome): void
+    {
+        $this->winBothHalvesHome = $winBothHalvesHome;
+    }
+
     public function matchesPlayedHome(): int
     {
         return $this->matchesPlayedHome;
@@ -151,6 +215,46 @@ class Team
     public function setOver15Away(int $over15Away): void
     {
         $this->over15Away = $over15Away;
+    }
+
+    public function over25Away(): int
+    {
+        return $this->over25Away;
+    }
+
+    public function setOver25Away(int $over25Away): void
+    {
+        $this->over25Away = $over25Away;
+    }
+
+    public function over35Away(): int
+    {
+        return $this->over35Away;
+    }
+
+    public function setOver35Away(int $over35Away): void
+    {
+        $this->over35Away = $over35Away;
+    }
+
+    public function over05HtAway(): int
+    {
+        return $this->over05HtAway;
+    }
+
+    public function setOver05HtAway(int $over05HtAway): void
+    {
+        $this->over05HtAway = $over05HtAway;
+    }
+
+    public function winBothHalvesAway(): int
+    {
+        return $this->winBothHalvesAway;
+    }
+
+    public function setWinBothHalvesAway(int $winBothHalvesAway): void
+    {
+        $this->winBothHalvesAway = $winBothHalvesAway;
     }
 
     public function matchesPlayedAway(): int

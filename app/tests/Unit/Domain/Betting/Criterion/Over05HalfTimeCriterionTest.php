@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Tests\Unit\Domain\Betting\Criterion;
 
-use App\Domain\Betting\Criterion\Over25Criterion;
+use App\Domain\Betting\Criterion\Over05HalfTimeCriterion;
 use App\Domain\Betting\ValueObject\TeamSnapshot;
 use PHPUnit\Framework\TestCase;
 
-class Over25CriterionTest extends TestCase
+class Over05HalfTimeCriterionTest extends TestCase
 {
-    private Over25Criterion $criterion;
+    private Over05HalfTimeCriterion $criterion;
 
     protected function setUp(): void
     {
-        $this->criterion = new Over25Criterion();
+        $this->criterion = new Over05HalfTimeCriterion();
     }
 
     private function snapshot(array $overrides = []): TeamSnapshot
@@ -26,16 +26,16 @@ class Over25CriterionTest extends TestCase
             formLast8: null,
             formLast5Home: null,
             formLast5Away: null,
-            over25Home: $overrides['over25Home'] ?? 0,
+            over25Home: 0,
             over15Home: 0,
             over35Home: 0,
-            over05HtHome: 0,
+            over05HtHome: $overrides['over05HtHome'] ?? 0,
             winBothHalvesHome: 0,
             matchesPlayedHome: $overrides['matchesPlayedHome'] ?? 0,
-            over15Away: $overrides['over15Away'] ?? 0,
+            over15Away: 0,
             over25Away: 0,
             over35Away: 0,
-            over05HtAway: 0,
+            over05HtAway: $overrides['over05HtAway'] ?? 0,
             winBothHalvesAway: 0,
             matchesPlayedAway: $overrides['matchesPlayedAway'] ?? 0,
             nextFixtureDate: $overrides['nextFixtureDate'] ?? new \DateTimeImmutable('+1 day'),
@@ -47,33 +47,33 @@ class Over25CriterionTest extends TestCase
         );
     }
 
-    public function test_isMet__home_team_with_high_over25_ratio__should_return_true(): void
+    public function test_isMet__home_team_with_70_percent_ht_ratio__should_return_true(): void
     {
-        $snapshot = $this->snapshot(['nextFixtureIsHome' => true, 'over25Home' => 6, 'matchesPlayedHome' => 8]);
+        $snapshot = $this->snapshot(['nextFixtureIsHome' => true, 'over05HtHome' => 7, 'matchesPlayedHome' => 10]);
         $this->assertTrue($this->criterion->isMet($snapshot));
     }
 
-    public function test_isMet__home_team_with_low_over25_ratio__should_return_false(): void
+    public function test_isMet__home_team_below_70_percent__should_return_false(): void
     {
-        $snapshot = $this->snapshot(['nextFixtureIsHome' => true, 'over25Home' => 4, 'matchesPlayedHome' => 8]);
+        $snapshot = $this->snapshot(['nextFixtureIsHome' => true, 'over05HtHome' => 6, 'matchesPlayedHome' => 10]);
         $this->assertFalse($this->criterion->isMet($snapshot));
     }
 
     public function test_isMet__home_team_with_insufficient_matches__should_return_false(): void
     {
-        $snapshot = $this->snapshot(['nextFixtureIsHome' => true, 'over25Home' => 3, 'matchesPlayedHome' => 4]);
+        $snapshot = $this->snapshot(['nextFixtureIsHome' => true, 'over05HtHome' => 4, 'matchesPlayedHome' => 4]);
         $this->assertFalse($this->criterion->isMet($snapshot));
     }
 
-    public function test_isMet__away_team_with_high_over15_ratio__should_return_true(): void
+    public function test_isMet__away_team_with_70_percent_ht_ratio__should_return_true(): void
     {
-        $snapshot = $this->snapshot(['nextFixtureIsHome' => false, 'over15Away' => 5, 'matchesPlayedAway' => 8]);
+        $snapshot = $this->snapshot(['nextFixtureIsHome' => false, 'over05HtAway' => 7, 'matchesPlayedAway' => 10]);
         $this->assertTrue($this->criterion->isMet($snapshot));
     }
 
-    public function test_isMet__away_team_with_low_over15_ratio__should_return_false(): void
+    public function test_isMet__away_team_below_70_percent__should_return_false(): void
     {
-        $snapshot = $this->snapshot(['nextFixtureIsHome' => false, 'over15Away' => 3, 'matchesPlayedAway' => 8]);
+        $snapshot = $this->snapshot(['nextFixtureIsHome' => false, 'over05HtAway' => 6, 'matchesPlayedAway' => 10]);
         $this->assertFalse($this->criterion->isMet($snapshot));
     }
 

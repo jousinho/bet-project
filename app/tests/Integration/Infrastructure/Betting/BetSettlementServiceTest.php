@@ -63,7 +63,7 @@ class BetSettlementServiceTest extends IntegrationTestCase
 
         $provider = $this->createStub(FootballDataProviderInterface::class);
         $provider->method('getFinishedMatches')->willReturn([
-            ['date' => $fixtureDate->format('c'), 'isHome' => true, 'goalsScored' => 2, 'goalsAgainst' => 1, 'result' => 'W'],
+            ['date' => $fixtureDate->format('c'), 'isHome' => true, 'goalsScored' => 2, 'goalsAgainst' => 1, 'result' => 'W', 'halfTimeGoalsScored' => 1, 'halfTimeGoalsAgainst' => 0],
         ]);
 
         $this->makeService($provider)->settleAll();
@@ -81,7 +81,7 @@ class BetSettlementServiceTest extends IntegrationTestCase
 
         $provider = $this->createStub(FootballDataProviderInterface::class);
         $provider->method('getFinishedMatches')->willReturn([
-            ['date' => $fixtureDate->format('c'), 'isHome' => true, 'goalsScored' => 1, 'goalsAgainst' => 1, 'result' => 'D'],
+            ['date' => $fixtureDate->format('c'), 'isHome' => true, 'goalsScored' => 1, 'goalsAgainst' => 1, 'result' => 'D', 'halfTimeGoalsScored' => 0, 'halfTimeGoalsAgainst' => 0],
         ]);
 
         $this->makeService($provider)->settleAll();
@@ -97,7 +97,7 @@ class BetSettlementServiceTest extends IntegrationTestCase
 
         $provider = $this->createStub(FootballDataProviderInterface::class);
         $provider->method('getFinishedMatches')->willReturn([
-            ['date' => $fixtureDate->format('c'), 'isHome' => true, 'goalsScored' => 2, 'goalsAgainst' => 1, 'result' => 'W'],
+            ['date' => $fixtureDate->format('c'), 'isHome' => true, 'goalsScored' => 2, 'goalsAgainst' => 1, 'result' => 'W', 'halfTimeGoalsScored' => 1, 'halfTimeGoalsAgainst' => 0],
         ]);
 
         $this->makeService($provider)->settleAll();

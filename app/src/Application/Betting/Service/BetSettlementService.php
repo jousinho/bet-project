@@ -76,10 +76,21 @@ class BetSettlementService
 
     private function evaluateOutcome(string $betType, array $match): bool
     {
+        $total    = $match['goalsScored'] + $match['goalsAgainst'];
+        $htTotal  = $match['halfTimeGoalsScored'] + $match['halfTimeGoalsAgainst'];
+        $wonBothH = $match['halfTimeGoalsScored'] > $match['halfTimeGoalsAgainst'] && $match['result'] === 'W';
+
         return match ($betType) {
-            Bet::TYPE_OVER_2_5 => ($match['goalsScored'] + $match['goalsAgainst']) >= 3,
-            Bet::TYPE_HOME_WIN => $match['isHome'] && $match['result'] === 'W',
-            default            => false,
+            Bet::TYPE_OVER_2_5        => $total >= 3,
+            Bet::TYPE_HOME_WIN        => $match['isHome'] && $match['result'] === 'W',
+            Bet::TYPE_OVER_1_5        => $total >= 2,
+            Bet::TYPE_OVER_3_5        => $total >= 4,
+            Bet::TYPE_UNDER_2_5       => $total < 3,
+            Bet::TYPE_AWAY_WIN        => !$match['isHome'] && $match['result'] === 'W',
+            Bet::TYPE_DOUBLE_CHANCE   => $match['isHome'] && $match['result'] !== 'L',
+            Bet::TYPE_OVER_05_HT      => $htTotal >= 1,
+            Bet::TYPE_WIN_BOTH_HALVES => $wonBothH,
+            default                   => false,
         };
     }
 

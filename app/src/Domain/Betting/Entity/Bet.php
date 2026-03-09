@@ -12,8 +12,15 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\UniqueConstraint(name: 'uq_bet_team_fixture_type', columns: ['team_id', 'fixture_date', 'bet_type'])]
 class Bet
 {
-    public const TYPE_OVER_2_5 = 'over_2_5';
-    public const TYPE_HOME_WIN = 'home_win';
+    public const TYPE_OVER_2_5        = 'over_2_5';
+    public const TYPE_HOME_WIN        = 'home_win';
+    public const TYPE_OVER_1_5        = 'over_1_5';
+    public const TYPE_OVER_3_5        = 'over_3_5';
+    public const TYPE_UNDER_2_5       = 'under_2_5';
+    public const TYPE_AWAY_WIN        = 'away_win';
+    public const TYPE_DOUBLE_CHANCE   = 'double_chance';
+    public const TYPE_OVER_05_HT      = 'over_05_ht';
+    public const TYPE_WIN_BOTH_HALVES = 'win_both_halves';
 
     public const STATUS_PENDING = 'pending';
     public const STATUS_WON    = 'won';

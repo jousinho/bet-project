@@ -86,13 +86,13 @@ class TeamSyncServiceTest extends IntegrationTestCase
         $provider = $this->createStub(FootballDataProviderInterface::class);
         $provider->method('getFinishedMatches')->willReturnOnConsecutiveCalls(
             [
-                ['isHome' => true,  'goalsScored' => 3, 'goalsAgainst' => 1, 'result' => 'W', 'date' => '2025-01-10T20:00:00Z'],
-                ['isHome' => false, 'goalsScored' => 2, 'goalsAgainst' => 0, 'result' => 'W', 'date' => '2025-01-03T20:00:00Z'],
+                ['isHome' => true,  'goalsScored' => 3, 'goalsAgainst' => 1, 'result' => 'W', 'date' => '2025-01-10T20:00:00Z', 'halfTimeGoalsScored' => 1, 'halfTimeGoalsAgainst' => 0],
+                ['isHome' => false, 'goalsScored' => 2, 'goalsAgainst' => 0, 'result' => 'W', 'date' => '2025-01-03T20:00:00Z', 'halfTimeGoalsScored' => 1, 'halfTimeGoalsAgainst' => 0],
             ],
             // Segunda llamada: partidos del rival (FC Barcelona jugando fuera)
             [
-                ['isHome' => false, 'goalsScored' => 1, 'goalsAgainst' => 0, 'result' => 'W', 'date' => '2025-01-08T20:00:00Z'],
-                ['isHome' => false, 'goalsScored' => 0, 'goalsAgainst' => 1, 'result' => 'L', 'date' => '2025-01-01T20:00:00Z'],
+                ['isHome' => false, 'goalsScored' => 1, 'goalsAgainst' => 0, 'result' => 'W', 'date' => '2025-01-08T20:00:00Z', 'halfTimeGoalsScored' => 0, 'halfTimeGoalsAgainst' => 0],
+                ['isHome' => false, 'goalsScored' => 0, 'goalsAgainst' => 1, 'result' => 'L', 'date' => '2025-01-01T20:00:00Z', 'halfTimeGoalsScored' => 0, 'halfTimeGoalsAgainst' => 0],
             ]
         );
         $provider->method('getNextFixture')->willReturn([

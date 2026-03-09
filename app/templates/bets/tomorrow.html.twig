@@ -63,6 +63,7 @@
         flex-wrap: wrap;
     }
     .vs { color: #94a3b8; font-weight: 400; font-size: 0.9rem; }
+    .tracked-name { font-weight: 800; color: #1d4ed8; }
 
     .match-meta {
         font-size: 0.82rem;
@@ -91,7 +92,14 @@
     .pill-away      { background: #ede9fe; color: #6d28d9; }
     .pill-no-fix    { background: #f1f5f9; color: #94a3b8; }
     .pill-over25    { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+    .pill-over15    { background: #bbf7d0; color: #14532d; border: 1px solid #4ade80; }
+    .pill-over35    { background: #a7f3d0; color: #064e3b; border: 1px solid #34d399; }
+    .pill-under25   { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
     .pill-home-win  { background: #fef9c3; color: #854d0e; border: 1px solid #fbbf24; }
+    .pill-away-win  { background: #ede9fe; color: #4c1d95; border: 1px solid #a78bfa; }
+    .pill-dc        { background: #fef3c7; color: #78350f; border: 1px solid #fcd34d; }
+    .pill-ht        { background: #e0f2fe; color: #0c4a6e; border: 1px solid #7dd3fc; }
+    .pill-wbh       { background: #fce7f3; color: #831843; border: 1px solid #f9a8d4; }
 
     /* ── Form badges ── */
     .badge {
@@ -128,6 +136,7 @@
         color: #94a3b8;
         margin-bottom: 0.1rem;
     }
+    .column-title.tracked { color: #1d4ed8; }
 
     .stat-block { display: flex; flex-direction: column; gap: 0.25rem; }
     .stat-label { font-size: 0.78rem; color: #64748b; }
@@ -179,17 +188,11 @@
             <div class="header-left">
                 <div class="match-title">
                     {% if bet.nextFixtureDate %}
-                        {% if bet.isHome %}
-                            {{ bet.teamName }}
-                            <span class="vs">vs</span>
-                            {{ bet.nextFixtureOpponentName ?? 'TBD' }}
-                        {% else %}
-                            {{ bet.nextFixtureOpponentName ?? 'TBD' }}
-                            <span class="vs">vs</span>
-                            {{ bet.teamName }}
-                        {% endif %}
+                        <span class="{{ bet.homeTeamName in bet.trackedTeamNames ? 'tracked-name' : '' }}">{{ bet.homeTeamName }}</span>
+                        <span class="vs">vs</span>
+                        <span class="{{ bet.awayTeamName in bet.trackedTeamNames ? 'tracked-name' : '' }}">{{ bet.awayTeamName }}</span>
                     {% else %}
-                        {{ bet.teamName }}
+                        <span class="tracked-name">{{ bet.homeTeamName }}</span>
                     {% endif %}
                 </div>
                 <div class="match-meta">
@@ -204,33 +207,50 @@
                 {% if bet.highlightedTomorrow %}
                     <span class="pill pill-tomorrow">TOMORROW</span>
                 {% endif %}
-                {% if bet.nextFixtureDate %}
-                    <span class="pill {{ bet.isHome ? 'pill-home' : 'pill-away' }}">
-                        {{ bet.isHome ? 'Home' : 'Away' }}
-                    </span>
-                {% else %}
+                {% if not bet.nextFixtureDate %}
                     <span class="pill pill-no-fix">—</span>
+                {% endif %}
+                {% if 'over_1_5' in bet.activeBetTypes %}
+                    <span class="pill pill-over15">OV 1.5</span>
                 {% endif %}
                 {% if 'over_2_5' in bet.activeBetTypes %}
                     <span class="pill pill-over25">OV 2.5</span>
                 {% endif %}
+                {% if 'over_3_5' in bet.activeBetTypes %}
+                    <span class="pill pill-over35">OV 3.5</span>
+                {% endif %}
+                {% if 'under_2_5' in bet.activeBetTypes %}
+                    <span class="pill pill-under25">UN 2.5</span>
+                {% endif %}
                 {% if 'home_win' in bet.activeBetTypes %}
                     <span class="pill pill-home-win">1</span>
+                {% endif %}
+                {% if 'away_win' in bet.activeBetTypes %}
+                    <span class="pill pill-away-win">2</span>
+                {% endif %}
+                {% if 'double_chance' in bet.activeBetTypes %}
+                    <span class="pill pill-dc">1X</span>
+                {% endif %}
+                {% if 'over_05_ht' in bet.activeBetTypes %}
+                    <span class="pill pill-ht">OV 0.5 HT</span>
+                {% endif %}
+                {% if 'win_both_halves' in bet.activeBetTypes %}
+                    <span class="pill pill-wbh">WBH</span>
                 {% endif %}
             </div>
         </summary>
 
         <div class="card-body">
 
-            {# ── Left column: our team ── #}
+            {# ── Left column: home team ── #}
             <div class="stat-column">
-                <div class="column-title">{{ bet.teamName }}</div>
+                <div class="column-title{{ bet.homeTeamName in bet.trackedTeamNames ? ' tracked' : '' }}">{{ bet.homeTeamName }}</div>
 
                 <div class="stat-block">
-                    <div class="stat-label">Form — last 8 (newest → oldest)</div>
+                    <div class="stat-label">Form — last 8</div>
                     <div class="stat-value">
-                        {% if bet.formLast8 %}
-                            {% for char in bet.formLast8|split('') %}
+                        {% if bet.homeFormLast8 %}
+                            {% for char in bet.homeFormLast8|split('') %}
                                 <span class="badge badge-{{ char }}">{{ char }}</span>
                             {% endfor %}
                         {% else %}
@@ -240,10 +260,10 @@
                 </div>
 
                 <div class="stat-block">
-                    <div class="stat-label">Form {{ bet.isHome ? 'at home' : 'away' }} — last 5</div>
+                    <div class="stat-label">Form at home — last 5</div>
                     <div class="stat-value">
-                        {% if bet.formSituational %}
-                            {% for char in bet.formSituational|split('') %}
+                        {% if bet.homeFormSituational %}
+                            {% for char in bet.homeFormSituational|split('') %}
                                 <span class="badge badge-{{ char }}">{{ char }}</span>
                             {% endfor %}
                         {% else %}
@@ -252,26 +272,27 @@
                     </div>
                 </div>
 
+                {% if bet.homeMatchesPlayed > 0 %}
                 <div class="stat-block">
-                    <div class="stat-label">{{ bet.isHome ? '+2.5 goals at home' : '+1.5 goals away' }}</div>
+                    <div class="stat-label">Goals at home</div>
                     <div class="stat-value">
-                        <span class="goals-chip">
-                            <span class="goals-num">{{ bet.teamOverCount }}</span>
-                            <span class="goals-den">/ {{ bet.teamMatchesPlayed }}</span>
-                        </span>
+                        <span class="goals-chip"><span class="goals-num">OV1.5: {{ bet.homeOver15 }}</span><span class="goals-den">/ {{ bet.homeMatchesPlayed }}</span></span>
+                        <span class="goals-chip"><span class="goals-num">OV2.5: {{ bet.homeOver25 }}</span><span class="goals-den">/ {{ bet.homeMatchesPlayed }}</span></span>
+                        <span class="goals-chip"><span class="goals-num">OV3.5: {{ bet.homeOver35 }}</span><span class="goals-den">/ {{ bet.homeMatchesPlayed }}</span></span>
                     </div>
                 </div>
+                {% endif %}
             </div>
 
-            {# ── Right column: opponent ── #}
+            {# ── Right column: away team ── #}
             <div class="stat-column">
-                <div class="column-title">{{ bet.nextFixtureOpponentName ?? 'Rival' }}</div>
+                <div class="column-title{{ bet.awayTeamName in bet.trackedTeamNames ? ' tracked' : '' }}">{{ bet.awayTeamName ?: 'Rival' }}</div>
 
                 <div class="stat-block">
-                    <div class="stat-label">Form {{ bet.isHome ? 'away' : 'at home' }} — last 5</div>
+                    <div class="stat-label">Form away — last 5</div>
                     <div class="stat-value">
-                        {% if bet.opponentFormSituational %}
-                            {% for char in bet.opponentFormSituational|split('') %}
+                        {% if bet.awayFormSituational %}
+                            {% for char in bet.awayFormSituational|split('') %}
                                 <span class="badge badge-{{ char }}">{{ char }}</span>
                             {% endfor %}
                         {% else %}
@@ -280,14 +301,13 @@
                     </div>
                 </div>
 
-                {% if bet.highlightedTomorrow and bet.opponentMatchesPlayed > 0 %}
+                {% if bet.awayMatchesPlayed > 0 %}
                 <div class="stat-block">
-                    <div class="stat-label">{{ bet.isHome ? '+1.5 goals away' : '+2.5 goals at home' }}</div>
+                    <div class="stat-label">Goals away</div>
                     <div class="stat-value">
-                        <span class="goals-chip">
-                            <span class="goals-num">{{ bet.opponentOverCount }}</span>
-                            <span class="goals-den">/ {{ bet.opponentMatchesPlayed }}</span>
-                        </span>
+                        <span class="goals-chip"><span class="goals-num">OV1.5: {{ bet.awayOver15 }}</span><span class="goals-den">/ {{ bet.awayMatchesPlayed }}</span></span>
+                        <span class="goals-chip"><span class="goals-num">OV2.5: {{ bet.awayOver25 }}</span><span class="goals-den">/ {{ bet.awayMatchesPlayed }}</span></span>
+                        <span class="goals-chip"><span class="goals-num">OV3.5: {{ bet.awayOver35 }}</span><span class="goals-den">/ {{ bet.awayMatchesPlayed }}</span></span>
                     </div>
                 </div>
                 {% endif %}
