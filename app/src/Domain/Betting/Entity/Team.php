@@ -58,6 +58,9 @@ class Team
     private ?bool $nextFixtureIsHome = null;
 
     #[ORM\Column(nullable: true)]
+    private ?int $nextFixtureMatchday = null;
+
+    #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $lastSyncedAt = null;
 
     #[ORM\OneToMany(mappedBy: 'team', targetEntity: TeamExternalId::class, cascade: ['persist', 'remove'])]
@@ -208,6 +211,16 @@ class Team
     public function setNextFixtureIsHome(?bool $nextFixtureIsHome): void
     {
         $this->nextFixtureIsHome = $nextFixtureIsHome;
+    }
+
+    public function nextFixtureMatchday(): ?int
+    {
+        return $this->nextFixtureMatchday;
+    }
+
+    public function setNextFixtureMatchday(?int $matchday): void
+    {
+        $this->nextFixtureMatchday = $matchday;
     }
 
     public function lastSyncedAt(): ?\DateTimeImmutable

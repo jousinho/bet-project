@@ -4,14 +4,19 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Betting;
 
+use App\Application\Betting\Service\BetEvaluatorService;
+use App\Application\Betting\Service\BetSettlementService;
 use App\Application\Betting\Service\TeamSyncService;
 use App\Application\Betting\Service\TomorrowBetsService;
 use App\Domain\Betting\Entity\Team;
+use App\Domain\Betting\Repository\BetRepositoryInterface;
 use App\Domain\Betting\Repository\FootballDataProviderInterface;
+use App\Domain\Betting\Repository\TeamBetStatsRepositoryInterface;
 use App\Domain\Betting\Repository\TeamExternalIdRepositoryInterface;
 use App\Domain\Betting\Repository\TeamRepositoryInterface;
 use App\Domain\Betting\Service\FormCalculator;
 use App\Domain\Betting\Service\GoalsCounterUpdater;
+use App\Domain\Betting\Service\SeasonResolver;
 use App\Tests\Integration\IntegrationTestCase;
 
 class TomorrowBetsServiceTest extends IntegrationTestCase
@@ -39,10 +44,20 @@ class TomorrowBetsServiceTest extends IntegrationTestCase
             new GoalsCounterUpdater(),
         );
 
+        $betRepository   = static::getContainer()->get(BetRepositoryInterface::class);
+        $statsRepository = static::getContainer()->get(TeamBetStatsRepositoryInterface::class);
+        $seasonResolver  = new SeasonResolver();
+
+        $betEvaluatorService  = new BetEvaluatorService($betRepository, $seasonResolver, []);
+        $betSettlementService = new BetSettlementService($betRepository, $statsRepository, $provider, $seasonResolver);
+
         return new TomorrowBetsService(
             $this->teamRepository,
             $this->teamExternalIdRepository,
             $syncService,
+            $betEvaluatorService,
+            $betSettlementService,
+            [],
         );
     }
 

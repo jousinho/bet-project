@@ -21,5 +21,8 @@ readonly class TeamBetDTO
         public int     $teamMatchesPlayed,
         public int     $opponentOverCount,
         public int     $opponentMatchesPlayed,
+
+        /** @var string[] */
+        public array   $activeBetTypes = [],
     ) {}
 }

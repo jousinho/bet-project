@@ -1,0 +1,379 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Bet History{% endblock %}
+
+{% block stylesheets %}
+<style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        max-width: 1000px;
+        margin: 2rem auto;
+        padding: 0 1.25rem;
+        background: #f8fafc;
+        color: #1e293b;
+    }
+
+    h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; color: #0f172a; }
+    h2 { font-size: 1.1rem; font-weight: 700; margin: 2rem 0 0.75rem; color: #0f172a; }
+
+    a { color: #3b82f6; text-decoration: none; font-size: 0.85rem; }
+    a:hover { text-decoration: underline; }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0,0,0,.06);
+        margin-bottom: 1.5rem;
+    }
+
+    th {
+        background: #f8fafc;
+        padding: 0.6rem 1rem;
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        color: #64748b;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    td {
+        padding: 0.65rem 1rem;
+        font-size: 0.85rem;
+        border-bottom: 1px solid #f1f5f9;
+        vertical-align: middle;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #f8fafc; }
+
+    .badge-status {
+        display: inline-block;
+        padding: 0.2rem 0.55rem;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+    }
+    .status-won     { background: #d1fae5; color: #065f46; }
+    .status-lost    { background: #fee2e2; color: #991b1b; }
+    .status-pending { background: #f1f5f9; color: #64748b; }
+
+    .badge-type {
+        display: inline-block;
+        padding: 0.2rem 0.55rem;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        background: #ede9fe;
+        color: #6d28d9;
+    }
+
+    .win-rate { font-weight: 700; color: #065f46; }
+    .no-data  { color: #94a3b8; font-style: italic; font-size: 0.85rem; }
+
+    /* ── Summary cards ── */
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+    .summary-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 1rem 1.25rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+    .summary-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #94a3b8; }
+    .summary-value { font-size: 1.5rem; font-weight: 700; color: #0f172a; margin-top: 0.2rem; }
+
+    /* ── Per-category cards ── */
+    .category-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+    .category-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-left: 4px solid #6d28d9;
+        border-radius: 10px;
+        padding: 0.9rem 1.1rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+    .category-card.green { border-left-color: #059669; }
+    .category-name  { font-size: 0.78rem; font-weight: 700; color: #0f172a; margin-bottom: 0.5rem; }
+    .category-stats { display: flex; gap: 1rem; font-size: 0.82rem; }
+    .category-stats span { color: #64748b; }
+    .category-stats strong { color: #0f172a; }
+    .category-wr { font-size: 0.82rem; margin-top: 0.3rem; font-weight: 700; color: #065f46; }
+
+    /* ── Weekly grid ── */
+    .weekly-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 0.6rem;
+        margin-bottom: 1.5rem;
+    }
+    .week-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-top: 4px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+    .week-card.good { border-top-color: #059669; }
+    .week-card.bad  { border-top-color: #dc2626; }
+    .week-card.mixed { border-top-color: #f59e0b; }
+    .week-label { font-size: 0.72rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 0.4rem; }
+    .week-results { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+    .week-won  { font-size: 0.85rem; font-weight: 700; color: #065f46; }
+    .week-lost { font-size: 0.85rem; font-weight: 700; color: #991b1b; }
+    .week-pending { font-size: 0.82rem; color: #94a3b8; }
+    .week-rate { font-size: 0.72rem; color: #64748b; margin-top: 0.25rem; }
+
+    /* ── Criteria ── */
+    .criteria-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+    .criterion-card {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-left: 4px solid #6d28d9;
+        border-radius: 10px;
+        padding: 1rem 1.25rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+    .criterion-card.green { border-left-color: #059669; }
+    .criterion-name { font-size: 0.85rem; font-weight: 700; color: #0f172a; margin-bottom: 0.5rem; }
+    .criterion-rule { font-size: 0.8rem; color: #475569; line-height: 1.5; padding-left: 1.1rem; }
+    .criterion-rule li { margin-bottom: 0.2rem; }
+</style>
+{% endblock %}
+
+{% block body %}
+<h1>Bet History</h1>
+<a href="{{ path('tomorrow_bets') }}">← Volver a Tomorrow's Bets</a>
+
+{# ── Computed data ── #}
+{% set total   = bets|length %}
+{% set won     = bets|filter(b => b.status == 'won')|length %}
+{% set lost    = bets|filter(b => b.status == 'lost')|length %}
+{% set pending = bets|filter(b => b.status == 'pending')|length %}
+{% set settled = won + lost %}
+
+{# Per-category #}
+{% set byType = {} %}
+{% for bet in bets %}
+    {% set t = bet.betType %}
+    {% set e = byType[t] is defined ? byType[t] : {total: 0, won: 0, lost: 0} %}
+    {% set e = e|merge({total: e.total + 1}) %}
+    {% if bet.status == 'won'  %}{% set e = e|merge({won:  e.won  + 1}) %}{% endif %}
+    {% if bet.status == 'lost' %}{% set e = e|merge({lost: e.lost + 1}) %}{% endif %}
+    {% set byType = byType|merge({(t): e}) %}
+{% endfor %}
+
+{# By matchday #}
+{% set byMatchday = {} %}
+{% for bet in bets %}
+    {% if bet.matchday %}
+        {% set key = bet.season ~ '-J' ~ '%02d'|format(bet.matchday) %}
+        {% set e = byMatchday[key] is defined ? byMatchday[key] : {label: 'J' ~ bet.matchday ~ ' (' ~ bet.season ~ ')', won: 0, lost: 0, pending: 0} %}
+        {% if bet.status == 'won'     %}{% set e = e|merge({won:     e.won     + 1}) %}{% endif %}
+        {% if bet.status == 'lost'    %}{% set e = e|merge({lost:    e.lost    + 1}) %}{% endif %}
+        {% if bet.status == 'pending' %}{% set e = e|merge({pending: e.pending + 1}) %}{% endif %}
+        {% set byMatchday = byMatchday|merge({(key): e}) %}
+    {% endif %}
+{% endfor %}
+{% set sortedMatchdays = byMatchday|keys|sort|reverse %}
+
+{# ── Summary ── #}
+<h2>Resumen general</h2>
+<div class="summary-grid">
+    <div class="summary-card">
+        <div class="summary-label">Total</div>
+        <div class="summary-value">{{ total }}</div>
+    </div>
+    <div class="summary-card">
+        <div class="summary-label">Ganadas</div>
+        <div class="summary-value" style="color:#065f46">{{ won }}</div>
+    </div>
+    <div class="summary-card">
+        <div class="summary-label">Perdidas</div>
+        <div class="summary-value" style="color:#991b1b">{{ lost }}</div>
+    </div>
+    <div class="summary-card">
+        <div class="summary-label">Pendientes</div>
+        <div class="summary-value" style="color:#64748b">{{ pending }}</div>
+    </div>
+    <div class="summary-card">
+        <div class="summary-label">Win rate</div>
+        <div class="summary-value">{{ settled > 0 ? ((won / settled * 100)|round(1)) ~ '%' : '—' }}</div>
+    </div>
+</div>
+
+{# Per-category breakdown #}
+{% if byType is not empty %}
+<div class="category-grid">
+    {% for typeName, e in byType %}
+    {% set s = e.won + e.lost %}
+    <div class="category-card {{ typeName == 'over_2_5' ? 'green' : '' }}">
+        <div class="category-name">{{ typeName|replace({'_': ' '})|upper }}</div>
+        <div class="category-stats">
+            <span><strong>{{ e.total }}</strong> apostadas</span>
+            <span><strong style="color:#065f46">{{ e.won }}</strong> ganadas</span>
+            <span><strong style="color:#991b1b">{{ e.lost }}</strong> perdidas</span>
+        </div>
+        <div class="category-wr">{{ s > 0 ? ((e.won / s * 100)|round(1)) ~ ' % acierto' : '— sin datos' }}</div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{# ── Weekly breakdown ── #}
+{% if byMatchday is not empty %}
+<h2>Resultados por jornada</h2>
+<div class="weekly-grid">
+    {% for key in sortedMatchdays %}
+    {% set w = byMatchday[key] %}
+    {% set ws = w.won + w.lost %}
+    {% set wr = ws > 0 ? (w.won / ws * 100)|round(0) : -1 %}
+    {% set cls = wr >= 60 ? 'good' : (wr >= 0 and wr < 40 ? 'bad' : (wr >= 0 ? 'mixed' : '')) %}
+    <div class="week-card {{ cls }}">
+        <div class="week-label">{{ w.label }}</div>
+        <div class="week-results">
+            <span class="week-won">✓ {{ w.won }}</span>
+            <span class="week-lost">✗ {{ w.lost }}</span>
+            {% if w.pending > 0 %}<span class="week-pending">⏳ {{ w.pending }}</span>{% endif %}
+        </div>
+        <div class="week-rate">{{ wr >= 0 ? wr ~ ' % acierto' : 'solo pendientes' }}</div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+{# ── Criteria ── #}
+<h2>Criterios activos</h2>
+<div class="criteria-grid">
+    <div class="criterion-card green">
+        <div class="criterion-name">OV 2.5 — Más de 2.5 goles</div>
+        <ul class="criterion-rule">
+            <li><strong>Local:</strong> ≥ 75 % de partidos en casa con +2.5 goles (mín. 5 partidos)</li>
+            <li><strong>Visitante:</strong> ≥ 62.5 % de partidos fuera con +1.5 goles (mín. 5 partidos)</li>
+        </ul>
+    </div>
+    <div class="criterion-card">
+        <div class="criterion-name">1 — Victoria local</div>
+        <ul class="criterion-rule">
+            <li>El equipo juega en casa</li>
+            <li>≥ 4 victorias en los últimos 5 partidos en casa</li>
+            <li>El rival tiene ≥ 3 derrotas en sus últimos 5 partidos fuera</li>
+        </ul>
+    </div>
+</div>
+
+{# ── Stats by team & type ── #}
+{% if stats is not empty %}
+<h2>Stats por equipo y tipo</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Equipo</th>
+            <th>Tipo</th>
+            <th>Temporada</th>
+            <th>Apostadas</th>
+            <th>Ganadas</th>
+            <th>Perdidas</th>
+            <th>Win %</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for s in stats %}
+        <tr>
+            <td>{{ s.team.name }}</td>
+            <td><span class="badge-type">{{ s.betType|replace({'_': ' '})|upper }}</span></td>
+            <td>{{ s.season }}</td>
+            <td>{{ s.timesBet }}</td>
+            <td>{{ s.timesWon }}</td>
+            <td>{{ s.timesLost }}</td>
+            <td class="win-rate">{{ s.winRate }}%</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{# Ranking #}
+{% set teamWins = {} %}
+{% for s in stats %}
+    {% set key = s.team.name %}
+    {% set prev = teamWins[key] is defined ? teamWins[key] : 0 %}
+    {% set teamWins = teamWins|merge({(key): prev + s.timesWon}) %}
+{% endfor %}
+{% set sortedTeams = teamWins|keys|sort((a, b) => teamWins[b] - teamWins[a]) %}
+<h2>Ranking por victorias</h2>
+<table>
+    <thead>
+        <tr><th>#</th><th>Equipo</th><th>Apuestas ganadas</th></tr>
+    </thead>
+    <tbody>
+        {% for teamName in sortedTeams %}
+        {% if teamWins[teamName] > 0 %}
+        <tr>
+            <td style="color:#94a3b8; font-weight:700">{{ loop.index }}</td>
+            <td>{{ teamName }}</td>
+            <td style="font-weight:700; color:#065f46">{{ teamWins[teamName] }}</td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+{# ── All bets ── #}
+<h2>Todas las apuestas</h2>
+{% if bets is empty %}
+    <p class="no-data">No hay apuestas registradas aún.</p>
+{% else %}
+<table>
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Equipo</th>
+            <th>Rival</th>
+            <th>Tipo</th>
+            <th>Temporada</th>
+            <th>Estado</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for bet in bets %}
+        <tr>
+            <td>{{ bet.fixtureDate|date('Y-m-d H:i') }}</td>
+            <td>{{ bet.team.name }}</td>
+            <td>{{ bet.opponentName }}</td>
+            <td><span class="badge-type">{{ bet.betType|replace({'_': ' '})|upper }}</span></td>
+            <td>{{ bet.season }}</td>
+            <td>
+                <span class="badge-status status-{{ bet.status }}">
+                    {{ bet.status|upper }}
+                </span>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+{% endblock %}

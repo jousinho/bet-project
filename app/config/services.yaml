@@ -35,6 +35,29 @@ services:
         arguments:
             $apiKey: '%env(FOOTBALL_DATA_API_KEY)%'
 
+    App\Domain\Betting\Repository\BetRepositoryInterface:
+        class: App\Infrastructure\Betting\Persistence\Doctrine\DoctrineBetRepository
+
+    App\Domain\Betting\Repository\TeamBetStatsRepositoryInterface:
+        class: App\Infrastructure\Betting\Persistence\Doctrine\DoctrineTeamBetStatsRepository
+
+    _instanceof:
+        App\Domain\Betting\Criterion\BetCriterionInterface:
+            tags: ['app.bet_criterion']
+
+    App\Application\Betting\Service\BetEvaluatorService:
+        arguments:
+            $criteria: !tagged_iterator app.bet_criterion
+
+    App\Application\Betting\Service\TomorrowBetsService:
+        arguments:
+            $criteria: !tagged_iterator app.bet_criterion
+
     App\Infrastructure\Betting\Http\Controller\BetsController:
         tags: ['controller.service_arguments']
         public: true
+
+    App\Infrastructure\Betting\Http\Controller\BetsHistoryController:
+        tags: ['controller.service_arguments']
+        public: true
+

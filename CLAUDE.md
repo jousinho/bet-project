@@ -7,6 +7,10 @@ Antes de implementar cualquier mejora o corrección:
 2. Documentar el plan técnico en `planification/tecnico/planes.md` (pasos detallados)
 3. Esperar confirmación antes de ejecutar
 
+### Reglas de ejecución
+- Mientras se trabaja en archivos de planificación o instrucciones, **no ejecutar nada**. Esperar a que el usuario dé la orden explícita de empezar.
+- Antes de hacer un commit, **avisar al usuario** y esperar su confirmación para que pueda revisar el código.
+
 Después de implementar:
 - Actualizar el estado en `planification/mis-requisitos/mejoras.md` (marcar como ✅)
 

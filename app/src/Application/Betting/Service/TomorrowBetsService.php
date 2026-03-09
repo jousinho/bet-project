@@ -5,16 +5,23 @@ declare(strict_types=1);
 namespace App\Application\Betting\Service;
 
 use App\Application\Betting\DTO\TeamBetDTO;
+use App\Domain\Betting\Criterion\BetCriterionInterface;
+use App\Application\Betting\Service\BetEvaluatorService;
+use App\Application\Betting\Service\BetSettlementService;
 use App\Domain\Betting\Entity\Team;
 use App\Domain\Betting\Repository\TeamExternalIdRepositoryInterface;
 use App\Domain\Betting\Repository\TeamRepositoryInterface;
 
 class TomorrowBetsService
 {
+    /** @param iterable<BetCriterionInterface> $criteria */
     public function __construct(
         private readonly TeamRepositoryInterface $teamRepository,
         private readonly TeamExternalIdRepositoryInterface $teamExternalIdRepository,
         private readonly TeamSyncService $teamSyncService,
+        private readonly BetEvaluatorService $betEvaluatorService,
+        private readonly BetSettlementService $betSettlementService,
+        private readonly iterable $criteria,
     ) {}
 
     /** @return TeamBetDTO[] */
@@ -25,6 +32,9 @@ class TomorrowBetsService
         foreach ($teams as $team) {
             $this->teamSyncService->sync($team);
         }
+
+        $this->betSettlementService->settleAll();
+        $this->betEvaluatorService->evaluateAll($teams);
 
         $teams = $this->teamRepository->findAllOrderedByNextFixture();
         $tomorrow = new \DateTimeImmutable('tomorrow midnight');
@@ -64,6 +74,13 @@ class TomorrowBetsService
             }
         }
 
+        $activeBetTypes = [];
+        foreach ($this->criteria as $criterion) {
+            if ($criterion->isMet($team)) {
+                $activeBetTypes[] = $criterion->betType();
+            }
+        }
+
         return new TeamBetDTO(
             teamName: $team->name(),
             nextFixtureDate: $nextFixtureDate?->format('Y-m-d H:i') ?? '',
@@ -77,6 +94,7 @@ class TomorrowBetsService
             teamMatchesPlayed: $isHome ? $team->matchesPlayedHome() : $team->matchesPlayedAway(),
             opponentOverCount: $opponentOverCount,
             opponentMatchesPlayed: $opponentMatchesPlayed,
+            activeBetTypes: $activeBetTypes,
         );
     }
 }
