@@ -6,9 +6,10 @@ namespace App\Application\Betting\Service;
 
 use App\Domain\Betting\Criterion\BetCriterionInterface;
 use App\Domain\Betting\Entity\Bet;
-use App\Domain\Betting\Entity\Team;
+use App\Domain\Tracking\Entity\Team;
 use App\Domain\Betting\Repository\BetRepositoryInterface;
 use App\Domain\Betting\Service\SeasonResolver;
+use App\Domain\Betting\ValueObject\TeamSnapshot;
 
 class BetEvaluatorService
 {
@@ -27,8 +28,10 @@ class BetEvaluatorService
                 continue;
             }
 
+            $snapshot = $this->snapshotFromTeam($team);
+
             foreach ($this->criteria as $criterion) {
-                if (!$criterion->isMet($team)) {
+                if (!$criterion->isMet($snapshot)) {
                     continue;
                 }
 
@@ -46,5 +49,27 @@ class BetEvaluatorService
                 ));
             }
         }
+    }
+
+    private function snapshotFromTeam(Team $team): TeamSnapshot
+    {
+        return new TeamSnapshot(
+            teamId: $team->id(),
+            teamName: $team->name(),
+            league: $team->league(),
+            formLast8: $team->formLast8(),
+            formLast5Home: $team->formLast5Home(),
+            formLast5Away: $team->formLast5Away(),
+            over25Home: $team->over25Home(),
+            matchesPlayedHome: $team->matchesPlayedHome(),
+            over15Away: $team->over15Away(),
+            matchesPlayedAway: $team->matchesPlayedAway(),
+            nextFixtureDate: $team->nextFixtureDate(),
+            nextFixtureMatchday: $team->nextFixtureMatchday(),
+            nextFixtureOpponentName: $team->nextFixtureOpponentName(),
+            nextFixtureIsHome: $team->nextFixtureIsHome(),
+            nextFixtureOpponentFormSituational: $team->nextFixtureOpponentFormSituational(),
+            nextFixtureOpponentId: $team->nextFixtureOpponentId(),
+        );
     }
 }

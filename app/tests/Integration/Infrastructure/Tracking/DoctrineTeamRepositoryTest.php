@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Integration\Infrastructure\Betting;
+namespace App\Tests\Integration\Infrastructure\Tracking;
 
-use App\Domain\Betting\Entity\Team;
-use App\Domain\Betting\Entity\TeamExternalId;
-use App\Domain\Betting\Repository\TeamExternalIdRepositoryInterface;
-use App\Domain\Betting\Repository\TeamRepositoryInterface;
+use App\Domain\Tracking\Entity\Team;
+use App\Domain\Tracking\Entity\TeamExternalId;
+use App\Domain\Tracking\Repository\TeamExternalIdRepositoryInterface;
+use App\Domain\Tracking\Repository\TeamRepositoryInterface;
 use App\Tests\Integration\IntegrationTestCase;
 
 class DoctrineTeamRepositoryTest extends IntegrationTestCase

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Betting\Http\Client;
+namespace App\Infrastructure\Tracking\Http\Client;
 
-use App\Domain\Betting\Repository\FootballDataProviderInterface;
+use App\Domain\Tracking\Repository\FootballDataProviderInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Betting\Criterion;
 
 use App\Domain\Betting\Entity\Bet;
-use App\Domain\Betting\Entity\Team;
+use App\Domain\Betting\ValueObject\TeamSnapshot;
 
 /**
  * Bet on home win when team plays at home and:
@@ -19,17 +19,14 @@ class HomeWinCriterion implements BetCriterionInterface
         return Bet::TYPE_HOME_WIN;
     }
 
-    public function isMet(Team $team): bool
+    public function isMet(TeamSnapshot $team): bool
     {
-        if ($team->nextFixtureDate() === null || $team->nextFixtureIsHome() !== true) {
+        if ($team->nextFixtureDate === null || $team->nextFixtureIsHome !== true) {
             return false;
         }
 
-        $homeForm = $team->formLast5Home() ?? '';
-        $opponentForm = $team->nextFixtureOpponentFormSituational() ?? '';
-
-        $homeWins     = substr_count($homeForm, 'W');
-        $opponentLosses = substr_count($opponentForm, 'L');
+        $homeWins       = substr_count($team->formLast5Home ?? '', 'W');
+        $opponentLosses = substr_count($team->nextFixtureOpponentFormSituational ?? '', 'L');
 
         return $homeWins >= 4 && $opponentLosses >= 3;
     }

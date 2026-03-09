@@ -1,8 +1,8 @@
 services:
-    App\Domain\Betting\Repository\TeamRepositoryInterface:
-        class: App\Infrastructure\Betting\Persistence\Doctrine\DoctrineTeamRepository
+    App\Domain\Tracking\Repository\TeamRepositoryInterface:
+        class: App\Infrastructure\Tracking\Persistence\Doctrine\DoctrineTeamRepository
         public: true
 
-    App\Domain\Betting\Repository\TeamExternalIdRepositoryInterface:
-        class: App\Infrastructure\Betting\Persistence\Doctrine\DoctrineTeamExternalIdRepository
+    App\Domain\Tracking\Repository\TeamExternalIdRepositoryInterface:
+        class: App\Infrastructure\Tracking\Persistence\Doctrine\DoctrineTeamExternalIdRepository
         public: true

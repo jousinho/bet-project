@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\Integration\Infrastructure\Betting;
 
-use App\Domain\Betting\Entity\Team;
-use App\Domain\Betting\Repository\TeamRepositoryInterface;
+use App\Domain\Tracking\Entity\Team;
+use App\Domain\Tracking\Repository\TeamRepositoryInterface;
 use App\Tests\Integration\WebIntegrationTestCase;
 
 class BetsControllerTest extends WebIntegrationTestCase

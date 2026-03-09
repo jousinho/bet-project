@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Betting\Persistence\Doctrine;
 
 use App\Domain\Betting\Entity\Bet;
-use App\Domain\Betting\Entity\Team;
+use App\Domain\Tracking\Entity\Team;
 use App\Domain\Betting\Repository\BetRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;

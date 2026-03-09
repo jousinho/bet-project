@@ -133,23 +133,33 @@ Actualizar `Over25Criterion` y `HomeWinCriterion` para usar `TeamSnapshot` (los 
 
 ### Paso 3 — Adaptar `BetEvaluatorService`
 
-Cambiar `evaluateAll(array $teams)` para recibir `TeamSnapshot[]` en vez de `Team[]`:
+`evaluateAll` **sigue recibiendo `Team[]`** (está en Application, puede ver ambos dominios). Internamente construye un `TeamSnapshot` por equipo para llamar a cada criterio, pero usa `$team` directamente para `Bet::create()` — que requiere la entidad Doctrine.
+
+Esto resuelve el gap: con solo `TeamSnapshot` no sería posible crear el `Bet` por la relación `ManyToOne`.
 
 ```php
-public function evaluateAll(array $snapshots): void
+public function evaluateAll(array $teams): void
+{
+    foreach ($teams as $team) {
+        $snapshot = TeamSnapshot::fromTeam($team);  // conversión aquí
+        foreach ($this->criteria as $criterion) {
+            if (!$criterion->isMet($snapshot)) { ... }
+            // Bet::create() sigue recibiendo $team (entidad Doctrine)
+            $this->betRepository->save(Bet::create($team, ...));
+        }
+    }
+}
 ```
 
-Internamente ya no accede a `$team->nextFixtureDate()` etc. sino a `$snapshot->nextFixtureDate`.
-
-La conversión `Team[] → TeamSnapshot[]` la hace `TomorrowBetsService` antes de llamar a `evaluateAll`.
+`TeamSnapshot::fromTeam()` se define como método estático en `TeamSnapshot`. Como `TeamSnapshot` vive en `Domain/Betting` y `Team` en `Domain/Tracking`, este método solo puede llamarse desde capas que vean ambos dominios (Application). El VO en sí solo usa tipos primitivos en su constructor.
 
 ---
 
 ### Paso 4 — Adaptar `BetSettlementService`
 
-`BetSettlementService` accede a `$bet->team()` para obtener el `externalId` y el `league`. Como `Bet` tendrá referencia a `Team` (que sigue siendo una entidad Doctrine), esto no cambia estructuralmente.
+`BetSettlementService` accede a `$bet->team()` y usa `FootballDataProviderInterface`. Tras el refactor, esa interfaz estará en `Domain/Tracking/` — por tanto `BetSettlementService` (en `Application/Betting`) tendrá una dependencia cross-domain explícita sobre `Domain/Tracking`.
 
-Sin embargo, el método `findExternalId(Team $team)` puede quedarse tal cual — `Bet` sigue teniendo `ManyToOne` a `Team` porque necesita persistir la relación en BD. No hay dependencia de dominio problemática aquí.
+Esto es aceptable en la capa Application (su responsabilidad es orquestar dominios), pero se documenta aquí para que no sorprenda. El método `findExternalId(Team $team)` queda tal cual — `Bet` mantiene `ManyToOne` a `Team` para Doctrine.
 
 ---
 
@@ -235,10 +245,10 @@ Actualizar los servicios públicos de test con los nuevos namespaces.
 
 ## Orden de ejecución recomendado
 
-1. Crear `TeamSnapshot` VO
-2. Adaptar criterios (`BetCriterionInterface`, `Over25Criterion`, `HomeWinCriterion`)
-3. Adaptar `BetEvaluatorService`
-4. Adaptar `TomorrowBetsService` (hace la conversión Team → TeamSnapshot)
+1. Crear `TeamSnapshot` VO (constructor con primitivos + `fromTeam(Team)` estático)
+2. Adaptar criterios (`BetCriterionInterface`, `Over25Criterion`, `HomeWinCriterion`) para usar `TeamSnapshot`
+3. Adaptar `BetEvaluatorService`: construye `TeamSnapshot` internamente para criterios, mantiene `Team` para `Bet::create()`
+4. Adaptar `TomorrowBetsService`: construye `TeamSnapshot` para la llamada `$criterion->isMet()` en `buildDto()`
 5. Mover ficheros de `Tracking` y actualizar namespaces
 6. Actualizar `services.yaml` y `services_test.yaml`
 7. Actualizar tests
@@ -250,4 +260,7 @@ Actualizar los servicios públicos de test con los nuevos namespaces.
 
 - No hay migración de BD — los nombres de tablas no cambian, solo los namespaces PHP.
 - `Bet` sigue teniendo `ManyToOne` a `Team` (necesario para Doctrine). Esto es una dependencia de infraestructura aceptable, no una dependencia de dominio.
+- `BetEvaluatorService` recibe `Team[]` y construye `TeamSnapshot` internamente para los criterios. No recibe `TeamSnapshot[]` directamente porque necesita `Team` para `Bet::create()`.
+- `BetSettlementService` depende de `FootballDataProviderInterface` (que tras el refactor vive en `Domain/Tracking`). Es una dependencia cross-domain explícita aceptable en Application.
+- `BetRepositoryInterface::existsForFixture(Team $team, ...)` no cambia — `Bet` mantiene la referencia a `Team`.
 - Si en el futuro `Betting` necesita datos de `Tracking` en tiempo de ejecución, lo hará a través de un repositorio o un servicio de consulta, nunca importando la entidad `Team` directamente en lógica de dominio.

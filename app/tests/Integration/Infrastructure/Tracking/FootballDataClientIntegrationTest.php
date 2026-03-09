@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Integration\Infrastructure\Betting;
+namespace App\Tests\Integration\Infrastructure\Tracking;
 
-use App\Infrastructure\Betting\Http\Client\FootballDataClient;
+use App\Infrastructure\Tracking\Http\Client\FootballDataClient;
 use App\Tests\Integration\IntegrationTestCase;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;

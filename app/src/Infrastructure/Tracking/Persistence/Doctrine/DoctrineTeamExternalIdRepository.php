@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Betting\Persistence\Doctrine;
+namespace App\Infrastructure\Tracking\Persistence\Doctrine;
 
-use App\Domain\Betting\Entity\TeamExternalId;
-use App\Domain\Betting\Repository\TeamExternalIdRepositoryInterface;
+use App\Domain\Tracking\Entity\TeamExternalId;
+use App\Domain\Tracking\Repository\TeamExternalIdRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 

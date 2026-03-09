@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Domain\Betting\Service;
+namespace App\Tests\Unit\Domain\Tracking\Service;
 
-use App\Domain\Betting\Service\FormCalculator;
+use App\Domain\Tracking\Service\FormCalculator;
 use PHPUnit\Framework\TestCase;
 
 class FormCalculatorTest extends TestCase

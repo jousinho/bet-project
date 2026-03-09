@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Betting\Command;
+namespace App\Infrastructure\Tracking\Command;
 
-use App\Domain\Betting\Entity\Team;
-use App\Domain\Betting\Entity\TeamExternalId;
-use App\Domain\Betting\Repository\TeamRepositoryInterface;
+use App\Domain\Tracking\Entity\Team;
+use App\Domain\Tracking\Entity\TeamExternalId;
+use App\Domain\Tracking\Repository\TeamRepositoryInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;

@@ -6,16 +6,16 @@ namespace App\Tests\Integration\Infrastructure\Betting;
 
 use App\Application\Betting\Service\BetEvaluatorService;
 use App\Application\Betting\Service\BetSettlementService;
-use App\Application\Betting\Service\TeamSyncService;
+use App\Application\Tracking\Service\TeamSyncService;
 use App\Application\Betting\Service\TomorrowBetsService;
-use App\Domain\Betting\Entity\Team;
+use App\Domain\Tracking\Entity\Team;
 use App\Domain\Betting\Repository\BetRepositoryInterface;
-use App\Domain\Betting\Repository\FootballDataProviderInterface;
+use App\Domain\Tracking\Repository\FootballDataProviderInterface;
 use App\Domain\Betting\Repository\TeamBetStatsRepositoryInterface;
-use App\Domain\Betting\Repository\TeamExternalIdRepositoryInterface;
-use App\Domain\Betting\Repository\TeamRepositoryInterface;
-use App\Domain\Betting\Service\FormCalculator;
-use App\Domain\Betting\Service\GoalsCounterUpdater;
+use App\Domain\Tracking\Repository\TeamExternalIdRepositoryInterface;
+use App\Domain\Tracking\Repository\TeamRepositoryInterface;
+use App\Domain\Tracking\Service\FormCalculator;
+use App\Domain\Tracking\Service\GoalsCounterUpdater;
 use App\Domain\Betting\Service\SeasonResolver;
 use App\Tests\Integration\IntegrationTestCase;
 
