@@ -16,9 +16,9 @@ interface FootballDataProviderInterface
     /**
      * Returns the last N finished league matches for the team.
      *
-     * Each match: ['date' => string, 'isHome' => bool, 'goalsScored' => int, 'goalsAgainst' => int, 'result' => string]
+     * Each match: ['date', 'isHome', 'goalsScored', 'goalsAgainst', 'result', 'halfTimeGoalsScored', 'halfTimeGoalsAgainst']
      *
-     * @return array<int, array{date: string, isHome: bool, goalsScored: int, goalsAgainst: int, result: string}>
+     * @return array<int, array{date: string, isHome: bool, goalsScored: int, goalsAgainst: int, result: string, halfTimeGoalsScored: int, halfTimeGoalsAgainst: int}>
      */
     public function getFinishedMatches(string $externalTeamId, string $competition, int $limit): array;
 }

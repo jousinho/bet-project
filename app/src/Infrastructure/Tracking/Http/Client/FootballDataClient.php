@@ -52,12 +52,19 @@ class FootballDataClient implements FootballDataProviderInterface
             $goalsScored = $isHome ? $homeGoals : $awayGoals;
             $goalsAgainst = $isHome ? $awayGoals : $homeGoals;
 
+            $htHome = $match['score']['halfTime']['home'] ?? 0;
+            $htAway = $match['score']['halfTime']['away'] ?? 0;
+            $htGoalsScored  = $isHome ? $htHome : $htAway;
+            $htGoalsAgainst = $isHome ? $htAway : $htHome;
+
             $result[] = [
                 'date' => $match['utcDate'],
                 'isHome' => $isHome,
                 'goalsScored' => $goalsScored,
                 'goalsAgainst' => $goalsAgainst,
                 'result' => $this->calculateResult($goalsScored, $goalsAgainst),
+                'halfTimeGoalsScored'  => $htGoalsScored,
+                'halfTimeGoalsAgainst' => $htGoalsAgainst,
             ];
         }
 

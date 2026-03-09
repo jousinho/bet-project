@@ -35,8 +35,8 @@ class FootballDataClientTest extends TestCase
             ))
             ->willReturn($this->makeResponse([
                 'matches' => [
-                    $this->makeMatchData('86', '81', 2, 1, '2025-01-10T20:00:00Z'),
-                    $this->makeMatchData('77', '86', 0, 1, '2025-01-03T20:00:00Z'),
+                    $this->makeMatchData('86', '81', 2, 1, '2025-01-10T20:00:00Z', htHome: 1, htAway: 0),
+                    $this->makeMatchData('77', '86', 0, 1, '2025-01-03T20:00:00Z', htHome: 0, htAway: 1),
                 ],
             ]));
 
@@ -44,17 +44,21 @@ class FootballDataClientTest extends TestCase
 
         $this->assertCount(2, $matches);
 
-        // Primer partido: Real Madrid en casa, gana 2-1
+        // Primer partido: Real Madrid en casa, gana 2-1 (HT 1-0)
         $this->assertTrue($matches[0]['isHome']);
         $this->assertSame(2, $matches[0]['goalsScored']);
         $this->assertSame(1, $matches[0]['goalsAgainst']);
         $this->assertSame('W', $matches[0]['result']);
+        $this->assertSame(1, $matches[0]['halfTimeGoalsScored']);
+        $this->assertSame(0, $matches[0]['halfTimeGoalsAgainst']);
 
-        // Segundo partido: Real Madrid fuera, gana 0-1
+        // Segundo partido: Real Madrid fuera, gana 0-1 (HT 0-1)
         $this->assertFalse($matches[1]['isHome']);
         $this->assertSame(1, $matches[1]['goalsScored']);
         $this->assertSame(0, $matches[1]['goalsAgainst']);
         $this->assertSame('W', $matches[1]['result']);
+        $this->assertSame(1, $matches[1]['halfTimeGoalsScored']);
+        $this->assertSame(0, $matches[1]['halfTimeGoalsAgainst']);
     }
 
     public function test_getting_finished_matches__when_api_returns_empty__should_return_empty_array(): void
@@ -114,13 +118,16 @@ class FootballDataClientTest extends TestCase
         return $response;
     }
 
-    private function makeMatchData(string $homeId, string $awayId, int $homeGoals, int $awayGoals, string $date): array
+    private function makeMatchData(string $homeId, string $awayId, int $homeGoals, int $awayGoals, string $date, int $htHome = 1, int $htAway = 0): array
     {
         return [
             'utcDate' => $date,
             'homeTeam' => ['id' => (int) $homeId],
             'awayTeam' => ['id' => (int) $awayId],
-            'score' => ['fullTime' => ['home' => $homeGoals, 'away' => $awayGoals]],
+            'score' => [
+                'fullTime' => ['home' => $homeGoals, 'away' => $awayGoals],
+                'halfTime' => ['home' => $htHome, 'away' => $htAway],
+            ],
         ];
     }
 }
