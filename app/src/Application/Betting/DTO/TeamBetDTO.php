@@ -7,20 +7,30 @@ namespace App\Application\Betting\DTO;
 readonly class TeamBetDTO
 {
     public function __construct(
-        public string  $teamName,
+        // Match identity
+        public string  $homeTeamName,
+        public string  $awayTeamName,
         public string  $nextFixtureDate,
-        public ?string $nextFixtureOpponentName,
-        public bool    $isHome,
         public bool    $highlightedTomorrow,
 
-        public ?string $formLast8,
-        public ?string $formSituational,
-        public ?string $opponentFormSituational,
+        // Which teams in this match are tracked by us
+        /** @var string[] */
+        public array   $trackedTeamNames,
 
-        public int     $teamOverCount,
-        public int     $teamMatchesPlayed,
-        public int     $opponentOverCount,
-        public int     $opponentMatchesPlayed,
+        // Home team stats
+        public ?string $homeFormLast8,
+        public ?string $homeFormSituational,
+        public int     $homeOver25,
+        public int     $homeOver15,
+        public int     $homeOver35,
+        public int     $homeMatchesPlayed,
+
+        // Away team stats
+        public ?string $awayFormSituational,
+        public int     $awayOver15,
+        public int     $awayOver25,
+        public int     $awayOver35,
+        public int     $awayMatchesPlayed,
 
         /** @var string[] */
         public array   $activeBetTypes = [],

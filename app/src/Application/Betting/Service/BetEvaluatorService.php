@@ -23,8 +23,17 @@ class BetEvaluatorService
     /** @param Team[] $teams */
     public function evaluateAll(array $teams): void
     {
+        $trackedIds = array_map(fn(Team $t) => $t->id(), $teams);
+        $trackedIdSet = array_flip($trackedIds);
+
         foreach ($teams as $team) {
             if ($team->nextFixtureDate() === null) {
+                continue;
+            }
+
+            // In cross-matches (both teams tracked), only create bets from the home team perspective
+            $opponentId = $team->nextFixtureOpponentId();
+            if ($opponentId !== null && isset($trackedIdSet[$opponentId]) && $team->nextFixtureIsHome() === false) {
                 continue;
             }
 

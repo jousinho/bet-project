@@ -88,8 +88,8 @@ class TomorrowBetsServiceTest extends IntegrationTestCase
 
         $dtos = $this->makeService()->getData();
 
-        $this->assertSame('Real Madrid', $dtos[0]->teamName);
-        $this->assertSame('FC Barcelona', $dtos[1]->teamName);
+        $this->assertSame('Real Madrid', $dtos[0]->homeTeamName);
+        $this->assertSame('FC Barcelona', $dtos[1]->homeTeamName);
     }
 
     public function test_getting_bets_data__when_team_plays_tomorrow__should_be_highlighted(): void
@@ -111,9 +111,9 @@ class TomorrowBetsServiceTest extends IntegrationTestCase
 
         $dtos = $this->makeService()->getData();
 
-        $this->assertSame(7, $dtos[0]->teamOverCount);
-        $this->assertSame(10, $dtos[0]->teamMatchesPlayed);
-        $this->assertSame('WWWDL', $dtos[0]->formSituational);
+        $this->assertSame(7, $dtos[0]->homeOver25);
+        $this->assertSame(10, $dtos[0]->homeMatchesPlayed);
+        $this->assertSame('WWWDL', $dtos[0]->homeFormSituational);
     }
 
     public function test_getting_bets_data__when_team_plays_away__should_use_away_stats(): void
@@ -126,8 +126,33 @@ class TomorrowBetsServiceTest extends IntegrationTestCase
 
         $dtos = $this->makeService()->getData();
 
-        $this->assertSame(4, $dtos[0]->teamOverCount);
-        $this->assertSame(8, $dtos[0]->teamMatchesPlayed);
-        $this->assertSame('WDLLW', $dtos[0]->formSituational);
+        $this->assertSame(4, $dtos[0]->awayOver15);
+        $this->assertSame(8, $dtos[0]->awayMatchesPlayed);
+        $this->assertSame('WDLLW', $dtos[0]->awayFormSituational);
+    }
+
+    public function test_getting_bets_data__when_two_tracked_teams_play_each_other__should_return_single_dto(): void
+    {
+        $home = Team::create('Real Madrid', 'PD');
+        $home->setNextFixtureDate(new \DateTimeImmutable('+7 days'));
+        $home->setNextFixtureIsHome(true);
+        $home->setNextFixtureOpponentId(999);
+        $this->teamRepository->save($home);
+
+        $away = Team::create('FC Barcelona', 'PD');
+        $away->setNextFixtureDate(new \DateTimeImmutable('+7 days'));
+        $away->setNextFixtureIsHome(false);
+        $away->setNextFixtureOpponentId($home->id());
+        $this->teamRepository->save($away);
+
+        // Update home team to point to away team's id
+        $home->setNextFixtureOpponentId($away->id());
+        $this->teamRepository->save($home);
+
+        $dtos = $this->makeService()->getData();
+
+        $this->assertCount(1, $dtos);
+        $this->assertSame('Real Madrid', $dtos[0]->homeTeamName);
+        $this->assertSame('FC Barcelona', $dtos[0]->awayTeamName);
     }
 }
