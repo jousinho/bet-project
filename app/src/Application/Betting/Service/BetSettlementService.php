@@ -7,7 +7,7 @@ namespace App\Application\Betting\Service;
 use App\Domain\Betting\Entity\Bet;
 use App\Domain\Betting\Entity\TeamBetStats;
 use App\Domain\Betting\Repository\BetRepositoryInterface;
-use App\Domain\Betting\Repository\FootballDataProviderInterface;
+use App\Domain\Tracking\Repository\FootballDataProviderInterface;
 use App\Domain\Betting\Repository\TeamBetStatsRepositoryInterface;
 use App\Domain\Betting\Service\SeasonResolver;
 
@@ -51,7 +51,7 @@ class BetSettlementService
         $this->updateStats($bet, $won, $now);
     }
 
-    private function findExternalId(\App\Domain\Betting\Entity\Team $team): string
+    private function findExternalId(\App\Domain\Tracking\Entity\Team $team): string
     {
         foreach ($team->externalIds() as $externalId) {
             if ($externalId->provider() === 'football-data.org') {

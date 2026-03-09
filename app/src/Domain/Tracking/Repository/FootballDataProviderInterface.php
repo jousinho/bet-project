@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Betting\Repository;
+namespace App\Domain\Tracking\Repository;
 
 interface FootballDataProviderInterface
 {

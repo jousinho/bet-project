@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace App\Application\Betting\Service;
 
 use App\Application\Betting\DTO\TeamBetDTO;
-use App\Domain\Betting\Criterion\BetCriterionInterface;
 use App\Application\Betting\Service\BetEvaluatorService;
 use App\Application\Betting\Service\BetSettlementService;
-use App\Domain\Betting\Entity\Team;
-use App\Domain\Betting\Repository\TeamExternalIdRepositoryInterface;
-use App\Domain\Betting\Repository\TeamRepositoryInterface;
+use App\Application\Tracking\Service\TeamSyncService;
+use App\Domain\Betting\Criterion\BetCriterionInterface;
+use App\Domain\Betting\ValueObject\TeamSnapshot;
+use App\Domain\Tracking\Entity\Team;
+use App\Domain\Tracking\Repository\TeamExternalIdRepositoryInterface;
+use App\Domain\Tracking\Repository\TeamRepositoryInterface;
 
 class TomorrowBetsService
 {
@@ -74,9 +76,10 @@ class TomorrowBetsService
             }
         }
 
+        $snapshot = $this->snapshotFromTeam($team);
         $activeBetTypes = [];
         foreach ($this->criteria as $criterion) {
-            if ($criterion->isMet($team)) {
+            if ($criterion->isMet($snapshot)) {
                 $activeBetTypes[] = $criterion->betType();
             }
         }
@@ -95,6 +98,28 @@ class TomorrowBetsService
             opponentOverCount: $opponentOverCount,
             opponentMatchesPlayed: $opponentMatchesPlayed,
             activeBetTypes: $activeBetTypes,
+        );
+    }
+
+    private function snapshotFromTeam(Team $team): TeamSnapshot
+    {
+        return new TeamSnapshot(
+            teamId: $team->id(),
+            teamName: $team->name(),
+            league: $team->league(),
+            formLast8: $team->formLast8(),
+            formLast5Home: $team->formLast5Home(),
+            formLast5Away: $team->formLast5Away(),
+            over25Home: $team->over25Home(),
+            matchesPlayedHome: $team->matchesPlayedHome(),
+            over15Away: $team->over15Away(),
+            matchesPlayedAway: $team->matchesPlayedAway(),
+            nextFixtureDate: $team->nextFixtureDate(),
+            nextFixtureMatchday: $team->nextFixtureMatchday(),
+            nextFixtureOpponentName: $team->nextFixtureOpponentName(),
+            nextFixtureIsHome: $team->nextFixtureIsHome(),
+            nextFixtureOpponentFormSituational: $team->nextFixtureOpponentFormSituational(),
+            nextFixtureOpponentId: $team->nextFixtureOpponentId(),
         );
     }
 }

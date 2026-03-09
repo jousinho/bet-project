@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Betting\Repository;
 
 use App\Domain\Betting\Entity\Bet;
-use App\Domain\Betting\Entity\Team;
+use App\Domain\Tracking\Entity\Team;
 
 interface BetRepositoryInterface
 {

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Domain\Betting\Entity;
 
 use App\Domain\Betting\Entity\Bet;
-use App\Domain\Betting\Entity\Team;
+use App\Domain\Tracking\Entity\Team;
 use PHPUnit\Framework\TestCase;
 
 class BetTest extends TestCase

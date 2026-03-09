@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Betting\Service;
+namespace App\Application\Tracking\Service;
 
-use App\Domain\Betting\Entity\Team;
-use App\Domain\Betting\Repository\FootballDataProviderInterface;
-use App\Domain\Betting\Repository\TeamRepositoryInterface;
-use App\Domain\Betting\Service\FormCalculator;
-use App\Domain\Betting\Service\GoalsCounterUpdater;
+use App\Domain\Tracking\Entity\Team;
+use App\Domain\Tracking\Repository\FootballDataProviderInterface;
+use App\Domain\Tracking\Repository\TeamRepositoryInterface;
+use App\Domain\Tracking\Service\FormCalculator;
+use App\Domain\Tracking\Service\GoalsCounterUpdater;
 
 class TeamSyncService
 {

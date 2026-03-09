@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Betting\Entity;
 
+use App\Domain\Tracking\Entity\Team;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]

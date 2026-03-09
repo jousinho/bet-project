@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Betting\Service;
+namespace App\Domain\Tracking\Service;
 
-use App\Domain\Betting\Entity\Team;
+use App\Domain\Tracking\Entity\Team;
 
 class GoalsCounterUpdater
 {

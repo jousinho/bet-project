@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Domain\Betting\Entity;
+namespace App\Tests\Unit\Domain\Tracking\Entity;
 
-use App\Domain\Betting\Entity\Team;
-use App\Domain\Betting\Entity\TeamExternalId;
+use App\Domain\Tracking\Entity\Team;
+use App\Domain\Tracking\Entity\TeamExternalId;
 use PHPUnit\Framework\TestCase;
 
 class TeamExternalIdTest extends TestCase

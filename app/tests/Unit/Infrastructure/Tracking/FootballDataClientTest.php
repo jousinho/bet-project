@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Infrastructure\Betting;
+namespace App\Tests\Unit\Infrastructure\Tracking;
 
-use App\Infrastructure\Betting\Http\Client\FootballDataClient;
+use App\Infrastructure\Tracking\Http\Client\FootballDataClient;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;

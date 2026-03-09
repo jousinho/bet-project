@@ -7,10 +7,10 @@ namespace App\Tests\Integration\Infrastructure\Betting;
 use App\Application\Betting\Service\BetEvaluatorService;
 use App\Domain\Betting\Criterion\BetCriterionInterface;
 use App\Domain\Betting\Entity\Bet;
-use App\Domain\Betting\Entity\Team;
-use App\Domain\Betting\Entity\TeamExternalId;
+use App\Domain\Tracking\Entity\Team;
+use App\Domain\Tracking\Entity\TeamExternalId;
 use App\Domain\Betting\Repository\BetRepositoryInterface;
-use App\Domain\Betting\Repository\TeamRepositoryInterface;
+use App\Domain\Tracking\Repository\TeamRepositoryInterface;
 use App\Domain\Betting\Service\SeasonResolver;
 use App\Tests\Integration\IntegrationTestCase;
 

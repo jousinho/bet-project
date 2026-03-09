@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Betting\Repository;
+namespace App\Domain\Tracking\Repository;
 
-use App\Domain\Betting\Entity\Team;
+use App\Domain\Tracking\Entity\Team;
 
 interface TeamRepositoryInterface
 {

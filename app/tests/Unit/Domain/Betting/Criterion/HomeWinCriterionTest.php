@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Tests\Unit\Domain\Betting\Criterion;
 
 use App\Domain\Betting\Criterion\HomeWinCriterion;
-use App\Domain\Betting\Entity\Team;
+use App\Domain\Betting\ValueObject\TeamSnapshot;
 use PHPUnit\Framework\TestCase;
 
 class HomeWinCriterionTest extends TestCase
@@ -17,47 +17,71 @@ class HomeWinCriterionTest extends TestCase
         $this->criterion = new HomeWinCriterion();
     }
 
-    private function homeTeam(string $homeForm, string $opponentForm): Team
+    private function snapshot(array $overrides = []): TeamSnapshot
     {
-        $team = Team::create('Test', 'PD');
-        $team->setNextFixtureDate(new \DateTimeImmutable('+1 day'));
-        $team->setNextFixtureIsHome(true);
-        $team->setFormLast5Home($homeForm);
-        $team->setNextFixtureOpponentFormSituational($opponentForm);
-        return $team;
+        return new TeamSnapshot(
+            teamId: 1,
+            teamName: 'Test',
+            league: 'PD',
+            formLast8: null,
+            formLast5Home: $overrides['formLast5Home'] ?? null,
+            formLast5Away: null,
+            over25Home: 0,
+            matchesPlayedHome: 0,
+            over15Away: 0,
+            matchesPlayedAway: 0,
+            nextFixtureDate: $overrides['nextFixtureDate'] ?? new \DateTimeImmutable('+1 day'),
+            nextFixtureMatchday: null,
+            nextFixtureOpponentName: null,
+            nextFixtureIsHome: $overrides['nextFixtureIsHome'] ?? null,
+            nextFixtureOpponentFormSituational: $overrides['nextFixtureOpponentFormSituational'] ?? null,
+            nextFixtureOpponentId: null,
+        );
     }
 
     public function test_isMet__strong_home_form_and_weak_opponent__should_return_true(): void
     {
-        $team = $this->homeTeam(homeForm: 'WWWWL', opponentForm: 'LLLWD');
-        $this->assertTrue($this->criterion->isMet($team));
+        $snapshot = $this->snapshot([
+            'nextFixtureIsHome' => true,
+            'formLast5Home' => 'WWWWL',
+            'nextFixtureOpponentFormSituational' => 'LLLWD',
+        ]);
+        $this->assertTrue($this->criterion->isMet($snapshot));
     }
 
     public function test_isMet__home_team_with_only_3_wins__should_return_false(): void
     {
-        $team = $this->homeTeam(homeForm: 'WWWLL', opponentForm: 'LLLWW');
-        $this->assertFalse($this->criterion->isMet($team));
+        $snapshot = $this->snapshot([
+            'nextFixtureIsHome' => true,
+            'formLast5Home' => 'WWWLL',
+            'nextFixtureOpponentFormSituational' => 'LLLWW',
+        ]);
+        $this->assertFalse($this->criterion->isMet($snapshot));
     }
 
     public function test_isMet__opponent_with_only_2_losses__should_return_false(): void
     {
-        $team = $this->homeTeam(homeForm: 'WWWWW', opponentForm: 'LLWWW');
-        $this->assertFalse($this->criterion->isMet($team));
+        $snapshot = $this->snapshot([
+            'nextFixtureIsHome' => true,
+            'formLast5Home' => 'WWWWW',
+            'nextFixtureOpponentFormSituational' => 'LLWWW',
+        ]);
+        $this->assertFalse($this->criterion->isMet($snapshot));
     }
 
     public function test_isMet__away_team__should_return_false(): void
     {
-        $team = Team::create('Test', 'PD');
-        $team->setNextFixtureDate(new \DateTimeImmutable('+1 day'));
-        $team->setNextFixtureIsHome(false);
-        $team->setFormLast5Home('WWWWW');
-        $team->setNextFixtureOpponentFormSituational('LLLLL');
-        $this->assertFalse($this->criterion->isMet($team));
+        $snapshot = $this->snapshot([
+            'nextFixtureIsHome' => false,
+            'formLast5Home' => 'WWWWW',
+            'nextFixtureOpponentFormSituational' => 'LLLLL',
+        ]);
+        $this->assertFalse($this->criterion->isMet($snapshot));
     }
 
     public function test_isMet__team_with_no_fixture__should_return_false(): void
     {
-        $team = Team::create('Test', 'PD');
-        $this->assertFalse($this->criterion->isMet($team));
+        $snapshot = $this->snapshot(['nextFixtureDate' => null]);
+        $this->assertFalse($this->criterion->isMet($snapshot));
     }
 }

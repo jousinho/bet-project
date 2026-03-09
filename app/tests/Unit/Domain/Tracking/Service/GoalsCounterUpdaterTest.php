@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Domain\Betting\Service;
+namespace App\Tests\Unit\Domain\Tracking\Service;
 
-use App\Domain\Betting\Entity\Team;
-use App\Domain\Betting\Service\GoalsCounterUpdater;
+use App\Domain\Tracking\Entity\Team;
+use App\Domain\Tracking\Service\GoalsCounterUpdater;
 use PHPUnit\Framework\TestCase;
 
 class GoalsCounterUpdaterTest extends TestCase
