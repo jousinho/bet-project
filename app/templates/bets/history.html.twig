@@ -230,7 +230,7 @@
 <div class="category-grid">
     {% for typeName, e in byType %}
     {% set s = e.won + e.lost %}
-    <div class="category-card {{ typeName == 'over_2_5' ? 'green' : '' }}">
+    <div class="category-card">
         <div class="category-name">{{ typeName|replace({'_': ' '})|upper }}</div>
         <div class="category-stats">
             <span><strong>{{ e.total }}</strong> apostadas</span>
@@ -276,11 +276,62 @@
         </ul>
     </div>
     <div class="criterion-card">
+        <div class="criterion-name">OV 1.5 — Más de 1.5 goles</div>
+        <ul class="criterion-rule">
+            <li><strong>Local:</strong> ≥ 70 % de partidos en casa con 2+ goles totales (mín. 5)</li>
+            <li><strong>Visitante:</strong> ≥ 70 % de partidos fuera con 2+ goles totales (mín. 5)</li>
+        </ul>
+    </div>
+    <div class="criterion-card">
+        <div class="criterion-name">OV 3.5 — Más de 3.5 goles</div>
+        <ul class="criterion-rule">
+            <li><strong>Local:</strong> ≥ 50 % de partidos en casa con 4+ goles totales (mín. 5)</li>
+            <li><strong>Visitante:</strong> ≥ 50 % de partidos fuera con 4+ goles totales (mín. 5)</li>
+        </ul>
+    </div>
+    <div class="criterion-card">
+        <div class="criterion-name">UN 2.5 — Menos de 2.5 goles</div>
+        <ul class="criterion-rule">
+            <li><strong>Local:</strong> ≥ 60 % de partidos en casa con menos de 3 goles totales (mín. 5)</li>
+            <li><strong>Visitante:</strong> ≥ 60 % de partidos fuera con menos de 3 goles totales (mín. 5)</li>
+        </ul>
+    </div>
+    <div class="criterion-card">
         <div class="criterion-name">1 — Victoria local</div>
         <ul class="criterion-rule">
             <li>El equipo juega en casa</li>
             <li>≥ 4 victorias en los últimos 5 partidos en casa</li>
             <li>El rival tiene ≥ 3 derrotas en sus últimos 5 partidos fuera</li>
+        </ul>
+    </div>
+    <div class="criterion-card">
+        <div class="criterion-name">2 — Victoria visitante</div>
+        <ul class="criterion-rule">
+            <li>El equipo juega fuera</li>
+            <li>≥ 3 victorias en los últimos 5 partidos fuera</li>
+            <li>El rival tiene ≥ 3 derrotas en sus últimos 5 partidos en casa</li>
+        </ul>
+    </div>
+    <div class="criterion-card">
+        <div class="criterion-name">1X — Doble oportunidad</div>
+        <ul class="criterion-rule">
+            <li>El equipo juega en casa</li>
+            <li>≥ 4 partidos sin perder (W o D) en los últimos 5 en casa</li>
+            <li>El rival tiene ≥ 4 partidos sin ganar (D o L) en los últimos 5 fuera</li>
+        </ul>
+    </div>
+    <div class="criterion-card">
+        <div class="criterion-name">OV 0.5 HT — Más de 0.5 goles en 1ª parte</div>
+        <ul class="criterion-rule">
+            <li><strong>Local:</strong> ≥ 70 % de partidos en casa con gol en primera parte (mín. 5)</li>
+            <li><strong>Visitante:</strong> ≥ 70 % de partidos fuera con gol en primera parte (mín. 5)</li>
+        </ul>
+    </div>
+    <div class="criterion-card">
+        <div class="criterion-name">WBH — Ganar ambas partes</div>
+        <ul class="criterion-rule">
+            <li><strong>Local:</strong> ≥ 40 % de partidos en casa ganando las dos partes (mín. 5)</li>
+            <li><strong>Visitante:</strong> ≥ 40 % de partidos fuera ganando las dos partes (mín. 5)</li>
         </ul>
     </div>
 </div>
