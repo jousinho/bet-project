@@ -32,18 +32,23 @@ Añadir los siguientes equipos al seed, ampliando a 6 ligas europeas:
 | PSV | Eredivisie (DED) | 674 |
 | AFC Ajax | Eredivisie (DED) | 678 |
 
-### Más tipos de apuesta
+### Más tipos de apuesta ✅
 
-¿Qué nuevos tipos de apuesta quieres evaluar? Algunos ejemplos posibles:
+Se añadieron 7 nuevos tipos de apuesta con sus criterios, tests y liquidación:
 
-- **Ambos equipos marcan (BTTS)**: los dos equipos anotan al menos un gol
-- **Victoria visitante**: el equipo de fuera gana el partido
-- **Over 1.5 goles**: al menos 2 goles en el partido
-- **Over 3.5 goles**: al menos 4 goles en el partido
-- **Clean sheet local**: el equipo de casa no encaja ningún gol
+| Tipo | Constante | Criterio |
+|---|---|---|
+| Over 1.5 goles | `over_1_5` | 70%+ partidos con 2+ goles totales (mín 5) |
+| Over 3.5 goles | `over_3_5` | 50%+ partidos con 4+ goles totales (mín 5) |
+| Under 2.5 goles | `under_2_5` | 60%+ partidos con menos de 3 goles totales (mín 5) |
+| Victoria visitante | `away_win` | 3+ victorias fuera en últimos 5 + rival 3+ derrotas en casa |
+| Doble oportunidad (1X) | `double_chance` | 4+ W/D en casa + rival 4+ D/L fuera |
+| Over 0.5 1ª parte | `over_05_ht` | 70%+ partidos con gol en primera parte (mín 5) |
+| Ganar ambas partes | `win_both_halves` | 40%+ partidos ganando las dos partes (mín 5) |
 
-Para cada tipo de apuesta nuevo necesito saber:
-- El criterio concreto (qué condición debe cumplirse para apostar)
-- Los umbrales numéricos (ej: "en 6 de los últimos 8 partidos...")
-- Si depende de estadísticas que ya se guardan o habría que capturar datos nuevos
+Los nuevos tipos aparecen automáticamente en la página de tomorrow con sus pills de colores.
+
+### Comando de sync ✅
+
+Se añadió `app:teams:sync` para sincronizar todos los equipos respetando el rate limit de la API (7 segundos entre equipos).
 

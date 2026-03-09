@@ -243,15 +243,15 @@ Bet::TYPE_WIN_BOTH_HALVES => $match['halfTimeGoalsScored'] > $match['halfTimeGoa
 
 ---
 
-## Orden de ejecución
+## Orden de ejecución ✅
 
-1. Paso 0 — Columnas nuevas en `Team` + migración (incluye `over25Away`)
-2. Paso 1 — `FootballDataProviderInterface` + `FootballDataClient` (halfTime)
-3. Paso 2 — `GoalsCounterUpdater` (nuevos contadores)
-4. Paso 3 — Constantes en `Bet`
-5. Paso 4a-g — Criterios (uno a uno, con su test)
-6. Paso 5 — Liquidación en `BetSettlementService`
-7. Tests completos en verde → commit
+1. ✅ Paso 0 — Columnas nuevas en `Team` + migración (incluye `over25Away`)
+2. ✅ Paso 1 — `FootballDataProviderInterface` + `FootballDataClient` (halfTime)
+3. ✅ Paso 2 — `GoalsCounterUpdater` (nuevos contadores)
+4. ✅ Paso 3 — Constantes en `Bet`
+5. ✅ Paso 4a-g — Criterios (uno a uno, con su test)
+6. ✅ Paso 5 — Liquidación en `BetSettlementService`
+7. ✅ Tests completos en verde → commit
 
 ---
 

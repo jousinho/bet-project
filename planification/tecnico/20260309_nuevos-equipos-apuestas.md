@@ -58,30 +58,33 @@ No hay migración de BD — la estructura de tablas no cambia.
 
 ---
 
-## Parte 2 — Nuevos tipos de apuesta
+## Parte 2 — Nuevos tipos de apuesta ✅
 
-**Pendiente de definir con el usuario.** Los criterios concretos y umbrales se documentarán aquí cuando se decidan.
+Ver plan detallado en `20260309_plan-nuevas-apuestas.md`. Implementado completo.
 
-Tipos candidatos (por confirmar):
-- BTTS (ambos equipos marcan)
-- Victoria visitante
-- Over 1.5 goles
-- Over 3.5 goles
+### Resumen de cambios
 
-Para cada tipo nuevo se necesita:
-1. Nombre y constante (`Bet::TYPE_*`)
-2. Criterio de evaluación con umbrales numéricos
-3. Lógica de liquidación (cómo determinar si se ganó o perdió)
-4. ¿Requiere estadísticas nuevas en `Team`? → posible migración de BD y cambios en `TeamSyncService`
+- **`Team`**: +8 nuevas columnas (`over15Home`, `over35Home/Away`, `over05HtHome/Away`, `winBothHalvesHome/Away`, `over25Away`) + getters/setters
+- **Migración**: `Version20260309112301` — añade las 8 columnas a la tabla `team`
+- **`FootballDataClient`**: `getFinishedMatches` ahora devuelve también `halfTimeGoalsScored` y `halfTimeGoalsAgainst`
+- **`GoalsCounterUpdater`**: calcula 12 contadores (era 4)
+- **`Bet`**: +7 constantes de tipo
+- **7 nuevas clases de criterio**: `Over15Criterion`, `Over35Criterion`, `Under25Criterion`, `AwayWinCriterion`, `DoubleChanceCriterion`, `Over05HalfTimeCriterion`, `WinBothHalvesCriterion`
+- **`BetSettlementService`**: evalúa los 9 tipos de apuesta
+- **Template `tomorrow.html.twig`**: pills de colores para los 7 nuevos tipos
+- **`SyncTeamsCommand`** (`app:teams:sync`): comando para sincronizar todos los equipos con rate limit seguro
+
+### Tests
+113 tests, 216 assertions, todo verde.
 
 ---
 
-## Orden de ejecución (Parte 1)
+## Orden de ejecución ✅
 
-1. Actualizar `SeedTeamsCommand` con los 23 equipos
-2. Ejecutar el seed en producción/dev
-3. Tests: el seed no tiene test unitario, verificar manualmente que los equipos aparecen en la página
-
-## Orden de ejecución (Parte 2)
-
-Por definir una vez acordados los criterios.
+1. ✅ Actualizar `SeedTeamsCommand` con los 23 equipos
+2. ✅ Ejecutar el seed: `docker compose exec -T php-cli php bin/console app:teams:seed`
+3. ✅ Columnas nuevas en `Team` + migración
+4. ✅ `FootballDataClient` con halfTime
+5. ✅ `GoalsCounterUpdater` ampliado
+6. ✅ Constantes en `Bet` + 7 criterios + liquidación
+7. ✅ Sincronizar equipos nuevos: `docker compose exec -T php-cli php bin/console app:teams:sync`
